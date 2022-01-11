@@ -86,6 +86,16 @@ export interface Waypoint {
  * PathwayProgress
  */
 export interface PathwayProgress {
+  actorId: string;
+  pathwayId: string;
+  journey: WaypointProgress[];
+  completedAt: string;
+}
+
+/**
+ * WaypointProgress
+ */
+export interface WaypointProgress {
   completedAt: string;
 }
 
@@ -99,6 +109,7 @@ export interface Passport {
   nextXP: number;
   badges: number;
   pathways: number;
+  reflections: number;
   milestones: number;
   network: string[];
   createdAt: string;
