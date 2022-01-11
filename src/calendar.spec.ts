@@ -61,10 +61,7 @@ describe("calendar", () => {
   describe("watch", () => {
     it("is ok", async () => {
       const svc = calendar();
-      await svc.watch("my", "foo", {
-        addressee: "jane",
-        email: "test@localcivics.io",
-      });
+      await svc.watch("my", "foo", {});
     });
   });
 
@@ -92,14 +89,14 @@ describe("calendar", () => {
   describe("deliberate", () => {
     it("is ok", async () => {
       const svc = calendar();
-      await svc.deliberate("my", "foo", { entry: "", rank: 1 });
+      await svc.deliberate("my", "foo", {});
     });
   });
 
   describe("reconsider", () => {
     it("is ok", async () => {
       const svc = calendar();
-      await svc.reconsider("my", "foo", { entry: "", rank: 1 });
+      await svc.reconsider("my", "foo", {});
     });
   });
 });

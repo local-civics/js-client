@@ -5,114 +5,114 @@ import axios, { AxiosRequestConfig } from "axios";
  * Badge
  */
 export interface Badge {
-  badgeId: string;
-  name: string;
-  description: string;
-  criteria: Criterion[];
-  networkId: string;
-  imageURL: string;
-  icon: string;
-  division: string;
-  notBefore: string;
-  notAfter: string;
-  weight: number;
-  progress: BadgeProgress;
-  createdAt: string;
+  badgeId?: string;
+  name?: string;
+  description?: string;
+  criteria?: Criterion[];
+  networkId?: string;
+  imageURL?: string;
+  icon?: string;
+  division?: string;
+  notBefore?: string;
+  notAfter?: string;
+  weight?: number;
+  progress?: BadgeProgress;
+  createdAt?: string;
 }
 
 /**
  * Criterion
  */
 export interface Criterion {
-  name: string;
-  tag: string;
-  weight: number;
-  frequency: number;
+  name?: string;
+  tag?: string;
+  weight?: number;
+  frequency?: number;
 }
 
 /**
  * BadgeProgress
  */
 export interface BadgeProgress {
-  actorId: string;
-  badgeId: string;
-  criteria: CriterionProgress[];
-  completedAt: string;
+  actorId?: string;
+  badgeId?: string;
+  criteria?: CriterionProgress[];
+  completedAt?: string;
 }
 
 /**
  * CriterionProgress
  */
 export interface CriterionProgress {
-  name: string;
-  tag: string;
-  weight: number;
-  frequency: number;
-  createdAt: string;
-  updatedAt: string;
-  completedAt: string;
+  name?: string;
+  tag?: string;
+  weight?: number;
+  frequency?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  completedAt?: string;
 }
 
 /**
  * Pathway
  */
 export interface Pathway {
-  pathwayId: string;
-  networkId: string;
-  division: string;
-  icon: string;
-  name: string;
-  description: string;
-  journey: Waypoint[];
-  tags: string[];
-  weight: number;
-  progress: PathwayProgress;
-  createdAt: string;
+  pathwayId?: string;
+  networkId?: string;
+  division?: string;
+  icon?: string;
+  name?: string;
+  description?: string;
+  journey?: Waypoint[];
+  tags?: string[];
+  weight?: number;
+  progress?: PathwayProgress;
+  createdAt?: string;
 }
 
 /**
  * Waypoint
  */
 export interface Waypoint {
-  name: string;
-  weight: number;
-  milestone: boolean;
-  icon: string;
-  tags: string[];
-  createdAt: string;
+  name?: string;
+  weight?: number;
+  milestone?: boolean;
+  icon?: string;
+  tags?: string[];
+  createdAt?: string;
 }
 
 /**
  * PathwayProgress
  */
 export interface PathwayProgress {
-  actorId: string;
-  pathwayId: string;
-  journey: WaypointProgress[];
-  completedAt: string;
+  actorId?: string;
+  pathwayId?: string;
+  journey?: WaypointProgress[];
+  completedAt?: string;
 }
 
 /**
  * WaypointProgress
  */
 export interface WaypointProgress {
-  completedAt: string;
+  completedAt?: string;
 }
 
 /**
  * Passport
  */
 export interface Passport {
-  actorId: string;
-  stage: number;
-  xp: number;
-  nextXP: number;
-  badges: number;
-  pathways: number;
-  reflections: number;
-  milestones: number;
-  network: string[];
-  createdAt: string;
+  actorId?: string;
+  stage?: number;
+  xp?: number;
+  nextXP?: number;
+  badges?: number;
+  pathways?: number;
+  reflections?: number;
+  milestones?: number;
+  network?: string[];
+  createdAt?: string;
 }
 
 /**

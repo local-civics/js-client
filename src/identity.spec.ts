@@ -52,21 +52,7 @@ describe("identity", () => {
   describe("save", () => {
     it("is ok", async () => {
       const svc = identity();
-      await svc.save("me", {
-        email: "",
-        familyName: "",
-        givenName: "",
-        grade: "",
-        gradeDescription: "",
-        interests: [],
-        network: [],
-        openId: "",
-        role: "",
-        roleDescription: "",
-        statement: "",
-        createdAt: "",
-        updatedAt: "",
-      });
+      await svc.save("me", {});
     });
   });
 

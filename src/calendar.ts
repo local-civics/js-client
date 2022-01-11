@@ -5,26 +5,26 @@ import axios, { AxiosRequestConfig } from "axios";
  * Event
  */
 export interface Event {
-  eventId: string;
-  calendarId: string;
-  slug: string;
-  name: string;
-  description: string;
-  address: string;
-  image: string;
-  thumbnail: string;
-  url: string;
-  registrationURL: string;
-  notBefore: string;
-  notAfter: string;
-  latitude: string;
-  longitude: string;
-  tags: string[];
-  points: number;
-  status: string;
-  watchers: number;
-  createdAt: string;
-  updatedAt: string;
+  eventId?: string;
+  calendarId?: string;
+  slug?: string;
+  name?: string;
+  description?: string;
+  address?: string;
+  image?: string;
+  thumbnail?: string;
+  url?: string;
+  registrationURL?: string;
+  notBefore?: string;
+  notAfter?: string;
+  latitude?: string;
+  longitude?: string;
+  tags?: string[];
+  points?: number;
+  status?: string;
+  watchers?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 /**
@@ -33,8 +33,8 @@ export interface Event {
 export interface Reflection {
   eventId?: string;
   calendarId?: string;
-  entry: string;
-  rank: number;
+  entry?: string;
+  rank?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -45,8 +45,8 @@ export interface Reflection {
 export interface Watcher {
   eventId?: string;
   calendarId?: string;
-  addressee: string;
-  email: string;
+  addressee?: string;
+  email?: string;
   createdAt?: string;
 }
 
@@ -111,9 +111,6 @@ export const calendar: (config?: AxiosRequestConfig) => CalendarService = (
     ) => {
       const config: AxiosRequestConfig = {
         params: { eventId: eventId, fields: fields },
-        validateStatus(status: number) {
-          return status === 200;
-        },
       };
       const { data } = await client.get(`/${calendarId}/reflections`, config);
       return data[0] as Reflection;
