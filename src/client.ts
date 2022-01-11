@@ -9,23 +9,13 @@ import { identity } from "./identity";
 export const version = require("../package.json").version;
 
 /**
- * The user agent header value.
- */
-const defaultUserAgent = `js-gateway/v${version}`;
-
-/**
  * The client for accessing various APIs.
  */
 export const useClient = (token?: string, environment?: string) => {
-  let userAgent = defaultUserAgent;
-  if (typeof window !== "undefined") {
-    userAgent = window.navigator.userAgent;
-  }
-
   /**
    * Headers sent with client
    */
-  const headers: { [key: string]: any } = { "User-Agent": userAgent };
+  const headers: { [key: string]: any } = {};
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
