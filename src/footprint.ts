@@ -153,16 +153,16 @@ export const footprint: (config?: AxiosRequestConfig) => FootprintService = (
  * BadgeQuery
  */
 export interface BadgeQuery {
-  limit?: string;
-  page?: string;
+  limit?: number;
+  page?: number;
 }
 
 /**
  * PathwayQuery
  */
 export interface PathwayQuery {
-  limit?: string;
-  page?: string;
+  limit?: number;
+  page?: number;
 }
 
 /**

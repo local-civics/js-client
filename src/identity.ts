@@ -94,8 +94,8 @@ export const identity: (config?: AxiosRequestConfig) => IdentityService = (
  */
 export interface CommunityQuery {
   code?: string;
-  limit?: string;
-  page?: string;
+  limit?: number;
+  page?: number;
 }
 
 /**

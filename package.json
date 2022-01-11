@@ -1,12 +1,13 @@
 {
   "name": "@local-civics/js-gateway",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -cw",
-    "test": "jest --coverage=true"
+    "test": "jest --coverage=true",
+    "fmt": "npx prettier --write ."
   },
   "dependencies": {
     "@sentry/browser": "^6.16.1",
