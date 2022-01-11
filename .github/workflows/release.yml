@@ -1,0 +1,30 @@
+# .github/workflows/release.yml
+
+# Workflow name
+name: "Release"
+
+# Calendar for the workflow
+on:
+  release:
+    types: [created]
+
+# List of jobs
+jobs:
+  npm-publish:
+    # Operating System
+    runs-on: ubuntu-latest
+    # Job steps
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+          registry-url: "https://registry.npmjs.org"
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Publish to NPM
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
