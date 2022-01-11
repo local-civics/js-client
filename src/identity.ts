@@ -11,20 +11,20 @@ import * as Sentry from "@sentry/browser";
  */
 export interface Identity {
   identityId?: string;
-  openId: string;
-  network: string[];
-  email: string;
-  givenName: string;
-  familyName: string;
-  role: string;
-  roleDescription: string;
-  grade: string;
-  gradeDescription: string;
-  interests: string[];
-  statement: string;
+  openId?: string;
+  network?: string[];
+  email?: string;
+  givenName?: string;
+  familyName?: string;
+  role?: string;
+  roleDescription?: string;
+  grade?: string;
+  gradeDescription?: string;
+  interests?: string[];
+  statement?: string;
   avatar?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   permissions?: string[];
 }
 
@@ -32,14 +32,14 @@ export interface Identity {
  * Community
  */
 export interface Community {
-  communityId: string;
-  code: string;
-  name: string;
-  city: string;
-  state: string;
-  avatar: string;
-  createdAt: string;
-  updatedAt: string;
+  communityId?: string;
+  code?: string;
+  name?: string;
+  city?: string;
+  state?: string;
+  avatar?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 /**
@@ -72,9 +72,6 @@ export const identity: (config?: AxiosRequestConfig) => IdentityService = (
     community: async (communityId: string, fields?: string[]) => {
       const config: AxiosRequestConfig = {
         params: { communityId: communityId, fields: fields },
-        validateStatus(status: number) {
-          return status === 200;
-        },
       };
       const { data } = await client.get("/pub/communities", config);
       return data[0] as Community;
