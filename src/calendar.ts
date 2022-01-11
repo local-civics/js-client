@@ -61,8 +61,8 @@ export interface EventQuery {
   tags?: string[];
   status?: "review" | "approved" | "canceled" | "watched" | "reflection";
   space?: string;
-  limit?: string;
-  page?: string;
+  limit?: number;
+  page?: number;
 }
 
 /**
