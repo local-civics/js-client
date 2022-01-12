@@ -164,6 +164,9 @@ export const footprint: (config?: AxiosRequestConfig) => FootprintService = (
  * BadgeQuery
  */
 export interface BadgeQuery {
+  incomplete?: boolean;
+  inactive?: boolean;
+  complete?: boolean;
   limit?: number;
   page?: number;
 }
