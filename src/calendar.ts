@@ -59,7 +59,13 @@ export interface EventQuery {
   day?: string;
   milestone?: boolean;
   tags?: string[];
-  status?: "review" | "approved" | "canceled" | "watched" | "reflection";
+  status?:
+    | "review"
+    | "approved"
+    | "canceled"
+    | "watched"
+    | "reflection.pending"
+    | "reflection.submitted";
   space?: string;
   limit?: number;
   page?: number;
