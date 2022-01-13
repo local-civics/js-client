@@ -5,6 +5,7 @@
 import { createServer, Registry, Server } from "miragejs";
 import { AnyModels, AnyFactories } from "miragejs/-types";
 import { footprint } from "./footprint";
+import { identity } from "./identity";
 
 let server: Server<Registry<AnyModels, AnyFactories>>;
 beforeAll(() => {
@@ -49,6 +50,20 @@ describe("footprint", () => {
     });
   });
 
+  describe("badge", () => {
+    it("is ok", async () => {
+      const svc = footprint();
+      const badge = await svc.badge("foo", "foo");
+      expect(badge).not.toBeUndefined();
+    });
+
+    it("is ok with fields", async () => {
+      const svc = footprint();
+      const badge = await svc.badge("foo", "foo", ["id"]);
+      expect(badge).not.toBeUndefined();
+    });
+  });
+
   describe("pathways", () => {
     it("is ok", async () => {
       const svc = footprint();
@@ -60,6 +75,20 @@ describe("footprint", () => {
       const svc = footprint();
       const pathways = await svc.pathways("my", {}, ["id"]);
       expect(pathways).toHaveLength(1);
+    });
+  });
+
+  describe("pathway", () => {
+    it("is ok", async () => {
+      const svc = footprint();
+      const pathway = await svc.pathway("foo", "foo");
+      expect(pathway).not.toBeUndefined();
+    });
+
+    it("is ok with fields", async () => {
+      const svc = footprint();
+      const pathway = await svc.pathway("foo", "foo", ["id"]);
+      expect(pathway).not.toBeUndefined();
     });
   });
 

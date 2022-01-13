@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/browser";
 import axios, { AxiosRequestConfig } from "axios";
+import { Pathway } from "./footprint";
 
 /**
  * Event
@@ -102,6 +103,15 @@ export const calendar: (config?: AxiosRequestConfig) => CalendarService = (
       return data as Event[];
     },
 
+    event: async (calendarId: string, eventId: string, fields?: string[]) => {
+      const config: AxiosRequestConfig = {
+        params: { eventId: eventId, fields: fields },
+        validateStatus: (code) => code === 200,
+      };
+      const { data } = await client.get(`/${calendarId}/events`, config);
+      return data[0] as Event;
+    },
+
     watch: async (calendarId: string, eventId: string, watcher: Watcher) => {
       return client.post(`/${calendarId}`, { ...watcher, eventId });
     },
@@ -159,6 +169,16 @@ export interface CalendarService {
     query?: EventQuery,
     fields?: string[]
   ) => Promise<Event[]>;
+
+  /**
+   * Search event by id
+   * @returns Promise<Event[]>
+   */
+  event: (
+    calendarId: string,
+    eventId: string,
+    fields?: string[]
+  ) => Promise<Event>;
 
   /**
    * Watch event

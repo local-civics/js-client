@@ -15,16 +15,16 @@ beforeAll(() => {
       this.get("/resolve", () => {
         return {};
       });
-      this.get("/resolve/:username", () => {
+      this.get("/users/:username", () => {
         return {};
       });
-      this.get("/:communityId/identities", () => {
+      this.get("/communities/:communityId/users", () => {
         return [{}];
       });
       this.put("/:identityId", () => {
         return null;
       });
-      this.get("/pub/communities", () => {
+      this.get("/communities", () => {
         return [{}];
       });
     },
@@ -55,30 +55,30 @@ describe("identity", () => {
     });
   });
 
-  describe("lookup", () => {
+  describe("user", () => {
     it("is ok", async () => {
       const svc = identity();
-      const id = await svc.lookup("foo");
+      const id = await svc.user("foo");
       expect(id).not.toBeUndefined();
     });
 
     it("is ok with fields", async () => {
       const svc = identity();
-      const id = await svc.lookup("foo", ["id"]);
+      const id = await svc.user("foo", ["id"]);
       expect(id).not.toBeUndefined();
     });
   });
 
-  describe("identities", () => {
+  describe("users", () => {
     it("is ok", async () => {
       const svc = identity();
-      const identities = await svc.identities("foo");
+      const identities = await svc.users("foo");
       expect(identities).toHaveLength(1);
     });
 
     it("is ok with fields", async () => {
       const svc = identity();
-      const identities = await svc.identities("foo", {}, ["id"]);
+      const identities = await svc.users("foo", {}, ["id"]);
       expect(identities).toHaveLength(1);
     });
   });

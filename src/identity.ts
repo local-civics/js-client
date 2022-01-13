@@ -74,17 +74,17 @@ export const identity: (config?: AxiosRequestConfig) => IdentityService = (
       const config: AxiosRequestConfig = {
         params: { communityId: communityId, fields: fields },
       };
-      const { data } = await client.get("/pub/communities", config);
+      const { data } = await client.get("/communities", config);
       return data[0] as Community;
     },
-    lookup: async (username: string, fields?: string[]) => {
+    user: async (username: string, fields?: string[]) => {
       const config: AxiosRequestConfig = {
         params: { fields: fields },
       };
-      const { data } = await client.get(`/resolve/${username}`, config);
+      const { data } = await client.get(`/users/${username}`, config);
       return data as Identity;
     },
-    identities: async (
+    users: async (
       communityId: string,
       query?: IdentityQuery,
       fields?: string[]
@@ -92,14 +92,17 @@ export const identity: (config?: AxiosRequestConfig) => IdentityService = (
       const config: AxiosRequestConfig = {
         params: { ...query, fields: fields },
       };
-      const { data } = await client.get(`/${communityId}/identities`, config);
+      const { data } = await client.get(
+        `/communities/${communityId}/users`,
+        config
+      );
       return data as Identity[];
     },
     communities: async (query?: CommunityQuery, fields?: string[]) => {
       const config: AxiosRequestConfig = {
         params: { ...query, fields: fields },
       };
-      const { data } = await client.get("/pub/communities", config);
+      const { data } = await client.get("/communities", config);
       return data as Community[];
     },
   };
@@ -133,23 +136,23 @@ export interface IdentityService {
   resolve: (fields?: string[]) => Promise<Identity>;
 
   /**
-   * Search community identities
+   * Search community users
    * @param communityId
    * @param query
    * @param fields
    */
-  identities: (
+  users: (
     communityId: string,
     query?: IdentityQuery,
     fields?: string[]
   ) => Promise<Identity[]>;
 
   /**
-   * Search identity by username
+   * Search user by username
    * @param username
    * @param fields
    */
-  lookup: (username: string, fields?: string[]) => Promise<Identity>;
+  user: (username: string, fields?: string[]) => Promise<Identity>;
 
   /**
    * Save an identity

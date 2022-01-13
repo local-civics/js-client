@@ -141,6 +141,14 @@ export const footprint: (config?: AxiosRequestConfig) => FootprintService = (
       const { data } = await client.get(`/${actorId}/badges`, config);
       return data as Badge[];
     },
+    badge: async (actorId: string, badgeId: string, fields?: string[]) => {
+      const config: AxiosRequestConfig = {
+        params: { badgeId: badgeId, fields: fields },
+        validateStatus: (code) => code === 200,
+      };
+      const { data } = await client.get(`/${actorId}/badges`, config);
+      return data[0] as Badge;
+    },
     pathways: async (
       actorId: string,
       query?: PathwayQuery,
@@ -151,6 +159,14 @@ export const footprint: (config?: AxiosRequestConfig) => FootprintService = (
       };
       const { data } = await client.get(`/${actorId}/pathways`, config);
       return data as Pathway[];
+    },
+    pathway: async (actorId: string, pathwayId: string, fields?: string[]) => {
+      const config: AxiosRequestConfig = {
+        params: { pathwayId: pathwayId, fields: fields },
+        validateStatus: (code) => code === 200,
+      };
+      const { data } = await client.get(`/${actorId}/pathways`, config);
+      return data[0] as Pathway;
     },
     passport: async (actorId: string, fields?: string[]) => {
       const config: AxiosRequestConfig = { params: { fields: fields } };
@@ -194,6 +210,16 @@ export interface FootprintService {
   ) => Promise<Badge[]>;
 
   /**
+   * Search badge by id
+   * @returns Promise<Badge>
+   */
+  badge: (
+    actorId: string,
+    badgeId: string,
+    fields?: string[]
+  ) => Promise<Badge>;
+
+  /**
    * Search pathways
    * @returns Promise<Pathway[]>
    */
@@ -202,6 +228,16 @@ export interface FootprintService {
     query?: PathwayQuery,
     fields?: string[]
   ) => Promise<Pathway[]>;
+
+  /**
+   * Search pathway by id
+   * @returns Promise<Pathway>
+   */
+  pathway: (
+    actorId: string,
+    pathwayId: string,
+    fields?: string[]
+  ) => Promise<Pathway>;
 
   /**
    * Get a passport by id

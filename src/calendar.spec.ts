@@ -5,6 +5,7 @@
 import { createServer, Registry, Server } from "miragejs";
 import { AnyModels, AnyFactories } from "miragejs/-types";
 import { calendar } from "./calendar";
+import { footprint } from "./footprint";
 
 let server: Server<Registry<AnyModels, AnyFactories>>;
 beforeAll(() => {
@@ -55,6 +56,20 @@ describe("calendar", () => {
     it("is not ok", async () => {
       const svc = calendar({ baseURL: "/" });
       await svc.events("my").catch(() => {});
+    });
+  });
+
+  describe("event", () => {
+    it("is ok", async () => {
+      const svc = calendar();
+      const event = await svc.event("foo", "foo");
+      expect(event).not.toBeUndefined();
+    });
+
+    it("is ok with fields", async () => {
+      const svc = calendar();
+      const event = await svc.event("foo", "foo", ["id"]);
+      expect(event).not.toBeUndefined();
     });
   });
 
