@@ -15,6 +15,9 @@ beforeAll(() => {
       this.get("/resolve", () => {
         return {};
       });
+      this.get("/resolve/:username", () => {
+        return {};
+      });
       this.get("/:communityId/identities", () => {
         return [{}];
       });
@@ -49,6 +52,20 @@ describe("identity", () => {
     it("is not ok", async () => {
       const svc = identity({ baseURL: "/" });
       await svc.resolve(["id"]).catch(() => {});
+    });
+  });
+
+  describe("identity", () => {
+    it("is ok", async () => {
+      const svc = identity();
+      const id = await svc.identity("foo");
+      expect(id).not.toBeUndefined();
+    });
+
+    it("is ok with fields", async () => {
+      const svc = identity();
+      const id = await svc.identity("foo", ["id"]);
+      expect(id).not.toBeUndefined();
     });
   });
 
