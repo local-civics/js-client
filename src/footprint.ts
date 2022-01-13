@@ -60,7 +60,6 @@ export interface Pathway {
   pathwayId?: string;
   networkId?: string;
   division?: string;
-  icon?: string;
   name?: string;
   description?: string;
   journey?: Waypoint[];
@@ -77,7 +76,6 @@ export interface Waypoint {
   name?: string;
   weight?: number;
   milestone?: boolean;
-  icon?: string;
   tags?: string[];
   createdAt?: string;
 }

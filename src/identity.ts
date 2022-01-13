@@ -68,7 +68,7 @@ export const identity: (config?: AxiosRequestConfig) => IdentityService = (
       return data as Identity;
     },
     save: async (identityId: string, identity: Identity) => {
-      return client.put(`/${identityId}`, identity);
+      return client.put(`/users/${identityId}`, identity);
     },
     community: async (communityId: string, fields?: string[]) => {
       const config: AxiosRequestConfig = {

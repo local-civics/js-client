@@ -21,7 +21,7 @@ beforeAll(() => {
       this.get("/communities/:communityId/users", () => {
         return [{}];
       });
-      this.put("/:identityId", () => {
+      this.put("/users/:identityId", () => {
         return null;
       });
       this.get("/communities", () => {
