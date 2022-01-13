@@ -12,6 +12,7 @@ import * as Sentry from "@sentry/browser";
 export interface Identity {
   identityId?: string;
   openId?: string;
+  username?: string;
   network?: string[];
   email?: string;
   givenName?: string;
@@ -76,6 +77,17 @@ export const identity: (config?: AxiosRequestConfig) => IdentityService = (
       const { data } = await client.get("/pub/communities", config);
       return data[0] as Community;
     },
+    identities: async (
+      communityId: string,
+      query?: IdentityQuery,
+      fields?: string[]
+    ) => {
+      const config: AxiosRequestConfig = {
+        params: { ...query, fields: fields },
+      };
+      const { data } = await client.get(`/${communityId}/identities`, config);
+      return data as Identity[];
+    },
     communities: async (query?: CommunityQuery, fields?: string[]) => {
       const config: AxiosRequestConfig = {
         params: { ...query, fields: fields },
@@ -85,6 +97,14 @@ export const identity: (config?: AxiosRequestConfig) => IdentityService = (
     },
   };
 };
+
+/**
+ * IdentityQuery
+ */
+export interface IdentityQuery {
+  limit?: number;
+  page?: number;
+}
 
 /**
  * CommunityQuery
@@ -104,6 +124,18 @@ export interface IdentityService {
    * @returns Promise<Identity>
    */
   resolve: (fields?: string[]) => Promise<Identity>;
+
+  /**
+   * Search community identities
+   * @param communityId
+   * @param query
+   * @param fields
+   */
+  identities: (
+    communityId: string,
+    query?: IdentityQuery,
+    fields?: string[]
+  ) => Promise<Identity[]>;
 
   /**
    * Save an identity
