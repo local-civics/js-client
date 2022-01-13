@@ -77,7 +77,7 @@ export const identity: (config?: AxiosRequestConfig) => IdentityService = (
       const { data } = await client.get("/pub/communities", config);
       return data[0] as Community;
     },
-    identity: async (username: string, fields?: string[]) => {
+    lookup: async (username: string, fields?: string[]) => {
       const config: AxiosRequestConfig = {
         params: { fields: fields },
       };
@@ -145,11 +145,11 @@ export interface IdentityService {
   ) => Promise<Identity[]>;
 
   /**
-   * Search community identity
+   * Search identity by username
    * @param username
    * @param fields
    */
-  identity: (username: string, fields?: string[]) => Promise<Identity>;
+  lookup: (username: string, fields?: string[]) => Promise<Identity>;
 
   /**
    * Save an identity

@@ -55,16 +55,16 @@ describe("identity", () => {
     });
   });
 
-  describe("identity", () => {
+  describe("lookup", () => {
     it("is ok", async () => {
       const svc = identity();
-      const id = await svc.identity("foo");
+      const id = await svc.lookup("foo");
       expect(id).not.toBeUndefined();
     });
 
     it("is ok with fields", async () => {
       const svc = identity();
-      const id = await svc.identity("foo", ["id"]);
+      const id = await svc.lookup("foo", ["id"]);
       expect(id).not.toBeUndefined();
     });
   });
