@@ -14,7 +14,7 @@ type api = (
   path: string,
   query?: object,
   body?: object
-) => Promise<AxiosResponse>;
+) => Promise<any>;
 
 /**
  * Setter for setting token
