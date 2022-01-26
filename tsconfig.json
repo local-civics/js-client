@@ -1,10 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "js-gateway",
+  "display": "js-client",
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
-    "target": "es5",
+    "target": "es6",
     "allowJs": true,
     "outDir": "dist",
     "declaration": true,
