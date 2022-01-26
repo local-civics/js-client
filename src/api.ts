@@ -104,7 +104,9 @@ export const useApi: () => { api: api; setToken: setToken } = () => {
       params: query,
       data: body,
     };
-    return client.request(req);
+
+    const { data } = await client.request(req);
+    return data;
   };
 
   return { api, setToken };
