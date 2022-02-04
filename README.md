@@ -1,24 +1,23 @@
-# js-gateway
+# js-client
 
-Javascript client library for Local Civics API Gateway
+Javascript client library for Local Civics Platform APIs.
 
 # Get started
 
 ## Install
 
-Add hoplite to your project.
+Add the client to your project.
 
-`npm install --save @local-civics/js-gateway`
+`npm install --save @local-civics/js-client`
 
 ### **Usage**
 
 Import the client
 
-`import { useClient } from '@local-civics/js-gateway'`
+`import { request } from '@local-civics/js-client'`
 
 and use it, like so
 
 ```
-const client = useClient()
-const identity = await client.identity.resolve()
+const resp = await request("my-access-token", GET", "/identity/v0/resolve")
 ```
