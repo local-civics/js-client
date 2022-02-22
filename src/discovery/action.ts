@@ -4,7 +4,6 @@ import { AxiosInstance } from "axios";
  * The action.
  */
 export type Action = {
-  [key: string]: string | number | boolean | string[] | undefined;
   actionId?: string;
   actionName?: string;
   communityId?: string;

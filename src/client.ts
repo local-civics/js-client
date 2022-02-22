@@ -9,6 +9,12 @@ import { communityService, residentService } from "./identity";
  */
 export const version = require("../package.json").version;
 
+/**
+ * Type for the client.
+ */
+export type Client = ReturnType<typeof client>
+
+
 // The js client for Local Platform APIs
 export const client = (config?: {
   accessToken?: string;

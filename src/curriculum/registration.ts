@@ -4,7 +4,6 @@ import { AxiosInstance } from "axios";
  * The registration.
  */
 export type Registration = {
-  [key: string]: string | undefined;
   communityId?: string;
   residentId?: string;
   experienceName?: string;
@@ -19,7 +18,6 @@ export type Registration = {
  * The registration query.
  */
 export type RegistrationQuery = {
-  [key: string]: string | number | string[] | undefined;
   experienceName?: string;
   limit?: number;
   page?: number;

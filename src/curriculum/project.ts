@@ -2,7 +2,6 @@
  * The project.
  */
 export type Project = {
-  [key: string]: string | number | string[] | undefined;
   projectId?: string;
   projectName?: string;
   badgeName?: string;

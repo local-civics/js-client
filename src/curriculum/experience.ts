@@ -4,7 +4,6 @@ import { AxiosInstance } from "axios";
  * The experience.
  */
 export type Experience = {
-  [key: string]: string | number | boolean | string[] | undefined;
   experienceId?: string;
   experienceName?: string;
   communityId?: string;
@@ -39,7 +38,6 @@ export type Experience = {
  * The experience query.
  */
 export type ExperienceQuery = {
-  [key: string]: string | boolean | number | string[] | undefined;
   experienceName?: string;
   displayName?: string;
   day?: string;
