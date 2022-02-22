@@ -14,10 +14,11 @@ Add the client to your project.
 
 Import the client
 
-`import { request } from '@local-civics/js-client'`
+`import { client } from '@local-civics/js-client'`
 
 and use it, like so
 
 ```
-const resp = await request("my-access-token", GET", "/identity/v0/resolve")
+const api = client("my-access-token")
+const resident = await api.residents.resolve()
 ```
