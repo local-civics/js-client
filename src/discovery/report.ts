@@ -4,7 +4,6 @@ import { AxiosInstance } from "axios";
  * The report.
  */
 export type Report = {
-  [key: string]: string | number | boolean | string[] | undefined;
   communityId?: string;
   residentId?: string;
   experienceId?: string;

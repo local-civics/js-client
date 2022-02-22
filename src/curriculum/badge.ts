@@ -5,7 +5,6 @@ import { Project } from "./project";
  * The badge.
  */
 export type Badge = {
-  [key: string]: string | number | string[] | Project[] | undefined;
   badgeId?: string;
   badgeName?: string;
   communityId?: string;
@@ -29,7 +28,6 @@ export type Badge = {
  * The badge query.
  */
 export type BadgeQuery = {
-  [key: string]: string | number | string[] | undefined;
   residentName?: string;
   badgeName?: string;
   displayName?: string;

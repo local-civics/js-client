@@ -4,7 +4,6 @@ import { AxiosInstance } from "axios";
  * The reflection.
  */
 export type Reflection = {
-  [key: string]: string | number | undefined;
   communityId?: string;
   residentId?: string;
   experienceName?: string;
@@ -18,7 +17,6 @@ export type Reflection = {
  * The reflection query.
  */
 export type ReflectionQuery = {
-  [key: string]: string | number | string[] | undefined;
   residentName?: string;
   experienceName?: string;
   limit?: number;

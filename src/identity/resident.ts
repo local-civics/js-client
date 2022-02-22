@@ -4,7 +4,6 @@ import { AxiosInstance } from "axios";
  * The resident.
  */
 export type Resident = {
-  [key: string]: number | string | boolean | undefined | string[] | null;
   residentId?: string;
   openId?: string;
   residentName?: string;
@@ -37,7 +36,6 @@ export type Resident = {
  * The resident query.
  */
 export type ResidentQuery = {
-  [key: string]: string | number | string[] | undefined;
   residentName?: string;
   limit?: number;
   page?: number;

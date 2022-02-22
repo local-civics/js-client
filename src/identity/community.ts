@@ -4,14 +4,6 @@ import { AxiosInstance } from "axios";
  * The community.
  */
 export type Community = {
-  [key: string]:
-    | number
-    | string
-    | boolean
-    | undefined
-    | string[]
-    | null
-    | CommunityArea;
   communityId?: string;
   communityName?: string;
   displayName?: string;
@@ -29,7 +21,6 @@ export type Community = {
  * Community area
  */
 export type CommunityArea = {
-  [key: string]: number | undefined;
   latitude?: number;
   longitude?: number;
   radius?: number;
@@ -39,7 +30,6 @@ export type CommunityArea = {
  * The community query.
  */
 export type CommunityQuery = {
-  [key: string]: string | number | string[] | undefined;
   displayName?: string;
   communityName?: string;
   limit?: number;

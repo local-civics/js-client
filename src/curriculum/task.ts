@@ -4,7 +4,6 @@ import { AxiosInstance } from "axios";
  * The task.
  */
 export type Task = {
-  [key: string]: string | number | string[] | undefined;
   taskId?: string;
   taskName?: string;
   badgeName?: string;
@@ -28,7 +27,6 @@ export type Task = {
  * The task query.
  */
 export type TaskQuery = {
-  [key: string]: string | number | string[] | undefined;
   taskName?: string;
   displayName?: string;
   badgeName?: string;
