@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -cw",
-    "test": "jest --coverage=true",
+    "test": "jest --coverage=true --passWithNoTests",
     "fmt": "npx prettier --write ."
   },
   "dependencies": {
