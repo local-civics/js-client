@@ -1,12 +1,12 @@
 {
   "name": "@local-civics/js-client",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -cw",
-    "test": "jest --coverage=true",
+    "test": "jest --coverage=true --passWithNoTests",
     "fmt": "npx prettier --write ."
   },
   "dependencies": {

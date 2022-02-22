@@ -1,14 +1,10 @@
-# .github/workflows/push.yml
+# .github/workflows/review.yml
 
 # Workflow name
-name: "Push"
+name: "Review"
 
 # Event for the workflow
 on:
-  push:
-    branches:
-      - develop
-      - master
   pull_request:
     branches:
       - develop

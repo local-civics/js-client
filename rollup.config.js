@@ -8,7 +8,7 @@ import { terser } from "rollup-plugin-terser";
 
 const cfg = [
   {
-    input: "./src/index.ts",
+    input: "./src/index.js",
     output: [
       {
         file: pkg.main,
