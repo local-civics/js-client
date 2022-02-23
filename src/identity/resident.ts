@@ -69,19 +69,21 @@ export const residentService = (client: AxiosInstance, version: number) => {
       residentName: string,
       resident: Resident & { avatarFile?: Blob }
     ) => {
+      resident = {...resident}
+
       if (resident.interests !== undefined) {
-        delete resident.interests;
         await client.request({
           method: "PUT",
           url: `/identity/v${version}/residents/${residentName}/interests`,
           data: {
-            impactStatement: resident.interests,
+            interests: resident.interests,
           },
         });
+
+        delete resident.interests;
       }
 
       if (resident.impactStatement !== undefined) {
-        delete resident.impactStatement;
         await client.request({
           method: "PUT",
           url: `/identity/v${version}/residents/${residentName}/impact-statement`,
@@ -89,10 +91,11 @@ export const residentService = (client: AxiosInstance, version: number) => {
             impactStatement: resident.impactStatement,
           },
         });
+
+        delete resident.impactStatement;
       }
 
       if (resident.avatarFile !== undefined) {
-        delete resident.avatarFile;
         await client.request({
           method: "PUT",
           url: `/identity/v${version}/residents/${residentName}/avatar`,
@@ -101,6 +104,8 @@ export const residentService = (client: AxiosInstance, version: number) => {
             avatar: resident.avatarFile,
           },
         });
+
+        delete resident.avatarFile;
       }
 
       if (Object.keys(resident).length > 0) {
