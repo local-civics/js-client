@@ -19,6 +19,7 @@ export type Client = ReturnType<typeof client>
 export const client = (config?: {
   accessToken?: string;
   majorVersion?: number;
+  errorHandle?: (err: Error) => void;
 }) => {
   /**
    * Headers sent with client
@@ -60,6 +61,12 @@ export const client = (config?: {
       }
 
       Sentry.captureException(error);
+
+      if(config?.errorHandle){
+        config.errorHandle(error)
+        return
+      }
+
       return Promise.reject(error);
     }
   );
