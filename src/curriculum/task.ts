@@ -58,7 +58,7 @@ export const taskService = (
     },
     start: async (residentName: string, taskName: string) => {
       return client.request({
-        method: "PUT",
+        method: "PATCH",
         url: `/curriculum/v${version}/residents/${residentName}/tasks/${taskName}`,
         data: { status: "in-progress" },
       });
