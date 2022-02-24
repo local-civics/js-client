@@ -65,14 +65,14 @@ export const taskService = (
     },
     stop: async (residentName: string, taskName: string) => {
       return client.request({
-        method: "PUT",
+        method: "PATCH",
         url: `/curriculum/v${version}/residents/${residentName}/tasks/${taskName}`,
         data: { status: "todo" },
       });
     },
     done: async (residentName: string, taskName: string) => {
       return client.request({
-        method: "PUT",
+        method: "PATCH",
         url: `/curriculum/v${version}/residents/${residentName}/tasks/${taskName}`,
         data: { status: "done" },
       });
