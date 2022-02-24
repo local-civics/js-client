@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import { AxiosRequestConfig } from "axios";
 import { Project } from "./project";
 
 /**
@@ -41,19 +41,22 @@ export type BadgeQuery = {
  * @param client
  * @param version
  */
-export const badgeService = (client: AxiosInstance, version: number) => {
+export const badgeService = (
+  client: { request: (conf: AxiosRequestConfig) => Promise<any> },
+  version: number
+) => {
   return {
     view: async (
       communityName: string,
       badgeName: string,
       query?: BadgeQuery
     ) => {
-      const { data } = await client.request({
+      const data: Badge = await client.request({
         method: "GET",
         url: `/curriculum/v${version}/communities/${communityName}/badges/${badgeName}`,
         params: query,
       });
-      return data as Badge;
+      return data;
     },
     start: async (residentName: string, badgeName: string) => {
       return client.request({
@@ -62,12 +65,12 @@ export const badgeService = (client: AxiosInstance, version: number) => {
       });
     },
     list: async (communityName: string, query?: BadgeQuery) => {
-      const { data } = await client.request({
+      const data: Badge[] = await client.request({
         method: "GET",
         url: `/curriculum/v${version}/communities/${communityName}/badges`,
         params: query,
       });
-      return data as Badge[];
+      return data;
     },
   };
 };

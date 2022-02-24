@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import { AxiosRequestConfig } from "axios";
 
 /**
  * The reflection.
@@ -29,14 +29,17 @@ export type ReflectionQuery = {
  * @param client
  * @param version
  */
-export const reflectionService = (client: AxiosInstance, version: number) => {
+export const reflectionService = (
+  client: { request: (conf: AxiosRequestConfig) => Promise<any> },
+  version: number
+) => {
   return {
     view: async (
       residentName: string,
       experienceName: string,
       query?: ReflectionQuery
     ) => {
-      const { data } = await client.request({
+      const data = await client.request({
         method: "GET",
         url: `/curriculum/v${version}/residents/${residentName}/reflections/${experienceName}`,
         params: query,
@@ -57,7 +60,7 @@ export const reflectionService = (client: AxiosInstance, version: number) => {
       });
     },
     list: async (communityName: string, query?: ReflectionQuery) => {
-      const { data } = await client.request({
+      const data = await client.request({
         method: "GET",
         url: `/curriculum/v${version}/communities/${communityName}/reflections`,
         params: query,
