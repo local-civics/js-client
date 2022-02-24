@@ -63,11 +63,11 @@ export const communityService = (
       });
       return data as Community[];
     },
-    join: async (communityName: string, accessCode: string) => {
+    join: async (communityName: string, residentName: string, accessCode: string) => {
       return client.request({
         method: "POST",
         url: `/identity/v${version}/communities/${communityName}/residents`,
-        data: { accessCode: accessCode },
+        data: { accessCode: accessCode, residentName: residentName, },
       });
     },
   };
