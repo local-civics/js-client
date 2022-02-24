@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import { AxiosRequestConfig } from "axios";
 
 /**
  * The resident.
@@ -47,10 +47,13 @@ export type ResidentQuery = {
  * @param client
  * @param version
  */
-export const residentService = (client: AxiosInstance, version: number) => {
+export const residentService = (
+  client: { request: (conf: AxiosRequestConfig) => Promise<any> },
+  version: number
+) => {
   return {
     view: async (residentName: string, query?: ResidentQuery) => {
-      const { data } = await client.request({
+      const data = await client.request({
         method: "GET",
         url: `/identity/v${version}/residents/${residentName}`,
         params: query,
@@ -58,7 +61,7 @@ export const residentService = (client: AxiosInstance, version: number) => {
       return data as Resident;
     },
     resolve: async (query?: ResidentQuery) => {
-      const { data } = await client.request({
+      const data = await client.request({
         method: "GET",
         url: `/identity/v${version}/resolve`,
         params: query,
@@ -69,7 +72,7 @@ export const residentService = (client: AxiosInstance, version: number) => {
       residentName: string,
       resident: Resident & { avatarFile?: Blob }
     ) => {
-      resident = {...resident}
+      resident = { ...resident };
 
       if (resident.interests !== undefined) {
         await client.request({

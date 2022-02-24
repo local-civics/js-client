@@ -1,6 +1,6 @@
 {
   "name": "@local-civics/js-client",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "scripts": {
@@ -17,19 +17,19 @@
     "@rollup/plugin-commonjs": "^19.0.2",
     "@rollup/plugin-node-resolve": "^13.0.4",
     "@rollup/plugin-typescript": "^8.2.4",
-    "@types/jest": "^27.4.0",
+    "@types/jest": "^27.4.1",
     "@types/node": "^16.4.13",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
     "autoprefixer": "^10.3.1",
-    "jest": "^27.4.7",
+    "jest": "^27.5.1",
     "miragejs": "^0.1.43",
     "prettier": "2.5.1",
     "rollup": "^2.55.1",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.30.0",
-    "typescript": "^4.3.5",
-    "ts-jest": "^27.1.2"
+    "ts-jest": "^27.1.3",
+    "typescript": "^4.5.5"
   }
 }

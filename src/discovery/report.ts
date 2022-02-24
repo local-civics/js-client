@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import { AxiosRequestConfig } from "axios";
 
 /**
  * The report.
@@ -72,10 +72,13 @@ export type ReportQuery = {
  * @param client
  * @param version
  */
-export const reportService = (client: AxiosInstance, version: number) => {
+export const reportService = (
+  client: { request: (conf: AxiosRequestConfig) => Promise<any> },
+  version: number
+) => {
   return {
     list: async (residentName: string, query?: ReportQuery) => {
-      const { data } = await client.request({
+      const data = await client.request({
         method: "GET",
         url: `/discovery/v${version}/residents/${residentName}/reports`,
         params: query,

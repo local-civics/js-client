@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import { AxiosRequestConfig } from "axios";
 
 /**
  * The action.
@@ -52,10 +52,13 @@ export type ActionQuery = {
  * @param client
  * @param version
  */
-export const actionService = (client: AxiosInstance, version: number) => {
+export const actionService = (
+  client: { request: (conf: AxiosRequestConfig) => Promise<any> },
+  version: number
+) => {
   return {
     list: async (residentName: string, query?: ActionQuery) => {
-      const { data } = await client.request({
+      const data = await client.request({
         method: "GET",
         url: `/discovery/v${version}/residents/${residentName}/actions`,
         params: query,

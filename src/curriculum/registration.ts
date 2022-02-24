@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import { AxiosRequestConfig } from "axios";
 
 /**
  * The registration.
@@ -29,14 +29,17 @@ export type RegistrationQuery = {
  * @param client
  * @param version
  */
-export const registrationService = (client: AxiosInstance, version: number) => {
+export const registrationService = (
+  client: { request: (conf: AxiosRequestConfig) => Promise<any> },
+  version: number
+) => {
   return {
     view: async (
       residentName: string,
       experienceName: string,
       query?: RegistrationQuery
     ) => {
-      const { data } = await client.request({
+      const data = await client.request({
         method: "GET",
         url: `/curriculum/v${version}/residents/${residentName}/registrations/${experienceName}`,
         params: query,
@@ -57,7 +60,7 @@ export const registrationService = (client: AxiosInstance, version: number) => {
       });
     },
     list: async (residentName: string, query?: RegistrationQuery) => {
-      const { data } = await client.request({
+      const data = await client.request({
         method: "GET",
         url: `/curriculum/v${version}/residents/${residentName}/registrations`,
         params: query,

@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import { AxiosRequestConfig } from "axios";
 
 /**
  * The experience.
@@ -63,14 +63,17 @@ export type ExperienceQuery = {
  * @param client
  * @param version
  */
-export const experienceService = (client: AxiosInstance, version: number) => {
+export const experienceService = (
+  client: { request: (conf: AxiosRequestConfig) => Promise<any> },
+  version: number
+) => {
   return {
     view: async (
       communityName: string,
       experienceName: string,
       query?: ExperienceQuery
     ) => {
-      const { data } = await client.request({
+      const data = await client.request({
         method: "GET",
         url: `/curriculum/v${version}/communities/${communityName}/experiences/${experienceName}`,
         params: query,
@@ -78,7 +81,7 @@ export const experienceService = (client: AxiosInstance, version: number) => {
       return data as Experience;
     },
     list: async (communityName: string, query?: ExperienceQuery) => {
-      const { data } = await client.request({
+      const data = await client.request({
         method: "GET",
         url: `/curriculum/v${version}/communities/${communityName}/experiences`,
         params: query,

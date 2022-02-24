@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import { AxiosRequestConfig } from "axios";
 
 /**
  * The community.
@@ -42,10 +42,13 @@ export type CommunityQuery = {
  * @param client
  * @param version
  */
-export const communityService = (client: AxiosInstance, version: number) => {
+export const communityService = (
+  client: { request: (conf: AxiosRequestConfig) => Promise<any> },
+  version: number
+) => {
   return {
     view: async (communityName: string, query?: CommunityQuery) => {
-      const { data } = await client.request({
+      const data = await client.request({
         method: "GET",
         url: `/identity/v${version}/communities/${communityName}`,
         params: query,
@@ -53,7 +56,7 @@ export const communityService = (client: AxiosInstance, version: number) => {
       return data as Community;
     },
     list: async (query?: CommunityQuery) => {
-      const { data } = await client.request({
+      const data = await client.request({
         method: "GET",
         url: `/identity/v${version}/communities`,
         params: query,

@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import { AxiosRequestConfig } from "axios";
 
 /**
  * The task.
@@ -43,10 +43,13 @@ export type TaskQuery = {
  * @param client
  * @param version
  */
-export const taskService = (client: AxiosInstance, version: number) => {
+export const taskService = (
+  client: { request: (conf: AxiosRequestConfig) => Promise<any> },
+  version: number
+) => {
   return {
     view: async (residentName: string, taskName: string, query?: TaskQuery) => {
-      const { data } = await client.request({
+      const data = await client.request({
         method: "GET",
         url: `/curriculum/v${version}/residents/${residentName}/tasks/${taskName}`,
         params: query,
@@ -75,7 +78,7 @@ export const taskService = (client: AxiosInstance, version: number) => {
       });
     },
     list: async (residentName: string, query?: TaskQuery) => {
-      const { data } = await client.request({
+      const data = await client.request({
         method: "GET",
         url: `/curriculum/v${version}/residents/${residentName}/tasks`,
         params: query,

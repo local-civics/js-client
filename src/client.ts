@@ -1,7 +1,13 @@
 import * as Sentry from "@sentry/browser";
-import axios                 from "axios";
-import { badgeService, reflectionService, taskService, experienceService, registrationService } from "./curriculum";
-import { actionService, reportService }                                from "./discovery";
+import axios, { AxiosRequestConfig } from "axios";
+import {
+  badgeService,
+  reflectionService,
+  taskService,
+  experienceService,
+  registrationService,
+} from "./curriculum";
+import { actionService, reportService } from "./discovery";
 import { communityService, residentService } from "./identity";
 
 /**
@@ -12,14 +18,13 @@ export const version = require("../package.json").version;
 /**
  * Type for the client.
  */
-export type Client = ReturnType<typeof client>
-
+export type Client = ReturnType<typeof client>;
 
 // The js client for Local Platform APIs
 export const client = (config?: {
   accessToken?: string;
   majorVersion?: number;
-  errorHandle?: (err: Error) => void;
+  catch?: (err: any) => void;
 }) => {
   /**
    * Headers sent with client
@@ -62,9 +67,9 @@ export const client = (config?: {
 
       Sentry.captureException(error);
 
-      if(config?.errorHandle){
-        config.errorHandle(error)
-        return
+      if (config?.catch) {
+        config.catch(error);
+        return;
       }
 
       return Promise.reject(error);
@@ -72,16 +77,33 @@ export const client = (config?: {
   );
 
   const major = config?.majorVersion || 0;
+  const request = async (r: AxiosRequestConfig) => {
+    try {
+      const { data } = await client.request(r);
+      return data;
+    } catch (error) {
+      if (config?.catch) {
+        config.catch(error);
+        return undefined;
+      }
+      throw error;
+    }
+  };
+
+  const hoc = {
+    request,
+  };
+
   return {
-    residents: residentService(client, major),
-    experiences: experienceService(client, major),
-    communities: communityService(client, major),
-    registrations: registrationService(client, major),
-    badges: badgeService(client, major),
-    tasks: taskService(client, major),
-    reflections: reflectionService(client, major),
-    actions: actionService(client, major),
-    reports: reportService(client, major),
+    residents: residentService(hoc, major),
+    experiences: experienceService(hoc, major),
+    communities: communityService(hoc, major),
+    registrations: registrationService(hoc, major),
+    badges: badgeService(hoc, major),
+    tasks: taskService(hoc, major),
+    reflections: reflectionService(hoc, major),
+    actions: actionService(hoc, major),
+    reports: reportService(hoc, major),
   };
 };
 
