@@ -8,6 +8,7 @@ export type Task = {
   taskName?: string;
   badgeName?: string;
   experienceName?: string;
+  experienceNamePrefix?: string;
   actionName?: string;
   displayName?: string;
   summary?: string;
