@@ -42,6 +42,7 @@ export type ExperienceQuery = {
   displayName?: string;
   day?: string;
   tags?: string[];
+  skills?: string[];
   milestone?: boolean;
   pathways?: (
     | "policy & government"
