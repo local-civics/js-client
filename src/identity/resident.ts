@@ -29,7 +29,6 @@ export type Resident = {
   createdAt?: string;
   updatedAt?: string;
   lastLoginAt?: string;
-  online?: boolean;
 };
 
 /**
