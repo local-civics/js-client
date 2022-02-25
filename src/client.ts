@@ -22,6 +22,7 @@ export type Client = ReturnType<typeof client>;
 
 // The js client for Local Platform APIs
 export const client = (config?: {
+  apiURL?: string
   accessToken?: string;
   majorVersion?: number;
   catch?: (err: any) => void;
@@ -34,17 +35,13 @@ export const client = (config?: {
     headers["Authorization"] = `Bearer ${config?.accessToken}`;
   }
 
-  /**
-   * Environment the application is running
-   */
-  const apiURL = process.env.REACT_APP_API_URL;
   const client = axios.create({
     baseURL: (() => {
-      if(!apiURL){
+      if(!config?.apiURL){
         return "https://dev.api.localcivics.io";
       }
 
-      return apiURL;
+      return config.apiURL;
     })(),
     timeout: 5000,
     headers: headers,
