@@ -6,6 +6,7 @@ export type Project = {
   projectName?: string;
   badgeName?: string;
   experienceName?: string;
+  experienceNamePrefix?: string;
   actionName?: string;
   displayName?: string;
   summary?: string;
