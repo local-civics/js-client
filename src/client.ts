@@ -37,7 +37,7 @@ export const client = (config?: {
   /**
    * Environment the application is running
    */
-  const environment = process.env.APP_ENV;
+  const environment = process.env.APP_ENV || process.env.REACT_APP_ENV;
   const client = axios.create({
     baseURL: (() => {
       if (environment === "docker") {
