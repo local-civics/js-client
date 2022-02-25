@@ -37,22 +37,14 @@ export const client = (config?: {
   /**
    * Environment the application is running
    */
-  const environment = process.env.REACT_APP_ENV;
+  const apiURL = process.env.REACT_APP_API_URL;
   const client = axios.create({
     baseURL: (() => {
-      if(!environment){
-        return "https://beta.api.localcivics.io";
+      if(!apiURL){
+        return "https://dev.api.localcivics.io";
       }
 
-      if (environment === "docker") {
-        return "http://localhost:8080";
-      }
-
-      if (environment === "prod") {
-        return "https://api.localcivics.io";
-      }
-
-      return `https://${environment}.api.localcivics.io`;
+      return apiURL;
     })(),
     timeout: 5000,
     headers: headers,
