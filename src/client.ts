@@ -37,14 +37,18 @@ export const client = (config?: {
   /**
    * Environment the application is running
    */
-  const environment = process.env.APP_ENV || process.env.REACT_APP_ENV;
+  const environment = process.env.REACT_APP_ENV;
   const client = axios.create({
     baseURL: (() => {
+      if(!environment){
+        return "https://beta.api.localcivics.io";
+      }
+
       if (environment === "docker") {
         return "http://localhost:8080";
       }
 
-      if (!environment || environment === "prod") {
+      if (environment === "prod") {
         return "https://api.localcivics.io";
       }
 
