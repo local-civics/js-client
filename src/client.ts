@@ -86,8 +86,11 @@ export const client = (config?: {
   const major = config?.majorVersion || 0;
   const request = async (r: AxiosRequestConfig) => {
     try {
-      const { data } = await client.request(r);
-      return data;
+      const resp = await client.request(r)
+      if(resp && resp.data){
+        return resp.data
+      }
+      return undefined;
     } catch (error) {
       if (config?.catch) {
         config.catch(error);
