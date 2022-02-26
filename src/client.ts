@@ -25,7 +25,7 @@ export const client = (config?: {
   apiURL?: string
   accessToken?: string;
   majorVersion?: number;
-  catch?: (err: any) => void;
+  onError?: (err: any) => any;
 }) => {
   /**
    * Headers sent with client
@@ -62,7 +62,7 @@ export const client = (config?: {
   });
 
   client.interceptors.response.use(
-    (response) => response,
+    (response) => response.data,
     (error) => {
       if (error.response) {
         error = new RequestError(
@@ -74,9 +74,8 @@ export const client = (config?: {
 
       Sentry.captureException(error);
 
-      if (config?.catch) {
-        config.catch(error);
-        return;
+      if (config?.onError) {
+        return config.onError(error);
       }
 
       return Promise.reject(error);
@@ -86,15 +85,11 @@ export const client = (config?: {
   const major = config?.majorVersion || 0;
   const request = async (r: AxiosRequestConfig) => {
     try {
-      const resp = await client.request(r)
-      if(resp && resp.data){
-        return resp.data
-      }
-      return undefined;
+      const { data } = await client.request(r)
+      return data;
     } catch (error) {
-      if (config?.catch) {
-        config.catch(error);
-        return undefined;
+      if (config?.onError) {
+        return config.onError(error);
       }
       throw error;
     }
