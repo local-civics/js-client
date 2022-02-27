@@ -4,56 +4,55 @@ import { AxiosRequestConfig } from "axios";
  * The report.
  */
 export type Report = {
-  communityId?: string;
-  residentId?: string;
-  experienceId?: string;
-  projectId?: string;
-  badgeId?: string;
-  degree?: number;
-  quality?: number;
-  nextPromotion?: number;
-  badges?: number;
-  milestones?: number;
-  reflections?: number;
-  registrations?: number;
+  communityId?: string | null;
+  residentId?: string | null;
+  experienceId?: string | null;
+  projectId?: string | null;
+  badgeId?: string | null;
+  degree?: number | null;
+  quality?: number | null;
+  nextPromotion?: number | null;
+  badges?: number | null;
+  milestones?: number | null;
+  reflections?: number | null;
+  registrations?: number | null;
   pathway?:
     | "policy & government"
     | "arts & culture"
     | "college & career"
     | "volunteer"
-    | "recreation";
+    | "recreation" | null;
   pathways?: (
     | "policy & government"
     | "arts & culture"
     | "college & career"
     | "volunteer"
     | "recreation"
-  )[];
-  skills?: string[];
-  tags?: string[];
-  tasks?: number;
-  activity?: number;
+  )[] | null;
+  skills?: string[] | null;
+  tags?: string[] | null;
+  tasks?: number | null;
+  activity?: number | null;
 };
 
 /**
  * The report query.
  */
 export type ReportQuery = {
-  [key: string]: string | number | string[] | undefined;
   pathways?: (
     | "policy & government"
     | "arts & culture"
     | "college & career"
     | "volunteer"
     | "recreation"
-  )[];
-  actionName?: string;
-  experienceId?: string;
-  badgeId?: string;
-  taskId?: string;
-  projectId?: string;
-  day?: string;
-  period?: "month" | "day" | "week";
+  )[] | null;
+  actionName?: string | null;
+  experienceId?: string | null;
+  badgeId?: string | null;
+  taskId?: string | null;
+  projectId?: string | null;
+  day?: string | null;
+  period?: "month" | "day" | "week" | null;
   groupBy?:
     | "resident"
     | "community"
@@ -62,9 +61,9 @@ export type ReportQuery = {
     | "task"
     | "experience"
     | "pathway";
-  limit?: number;
-  page?: number;
-  fields?: string[];
+  limit?: number | null;
+  page?: number | null;
+  fields?: string[] | null;
 };
 
 /**

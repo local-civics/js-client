@@ -4,39 +4,39 @@ import { AxiosRequestConfig } from "axios";
  * The task.
  */
 export type Task = {
-  taskId?: string;
-  taskName?: string;
-  badgeName?: string;
-  experienceName?: string;
-  experienceNamePrefix?: string;
-  actionName?: string;
-  displayName?: string;
-  summary?: string;
-  communityId?: string;
-  residentId?: string;
-  quantity?: string;
-  quality?: string;
-  status?: "todo" | "in-progress" | "done";
-  notBefore?: string;
-  notAfter?: string;
-  completedAt?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  taskId?: string | null;
+  taskName?: string | null;
+  badgeName?: string | null;
+  experienceName?: string | null;
+  experienceNamePrefix?: string | null;
+  actionName?: string | null;
+  displayName?: string | null;
+  summary?: string | null;
+  communityId?: string | null;
+  residentId?: string | null;
+  quantity?: string | null;
+  quality?: string | null;
+  status?: "todo" | "in-progress" | "done" | null;
+  notBefore?: string | null;
+  notAfter?: string | null;
+  completedAt?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 };
 
 /**
  * The task query.
  */
 export type TaskQuery = {
-  taskName?: string;
-  displayName?: string;
-  badgeName?: string;
-  experienceName?: string;
-  actionName?: string;
-  status?: "todo" | "in-progress" | "review" | "done";
-  limit?: number;
-  page?: number;
-  fields?: string[];
+  taskName?: string | null;
+  displayName?: string | null;
+  badgeName?: string | null;
+  experienceName?: string | null;
+  actionName?: string | null;
+  status?: "todo" | "in-progress" | "review" | "done" | null;
+  limit?: number | null;
+  page?: number | null;
+  fields?: string[] | null;
 };
 
 /**

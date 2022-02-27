@@ -4,47 +4,46 @@ import { AxiosRequestConfig } from "axios";
  * The action.
  */
 export type Action = {
-  actionId?: string;
-  actionName?: string;
-  communityId?: string;
-  residentId?: string;
-  peerId?: string;
-  experienceId?: string;
-  experienceName?: string;
-  projectId?: string;
-  badgeId?: string;
-  taskId?: string;
-  version?: string;
-  ip?: string;
-  userAgent?: string;
-  tags?: string[];
-  skills?: string[];
+  actionId?: string | null;
+  actionName?: string | null;
+  communityId?: string | null;
+  residentId?: string | null;
+  peerId?: string | null;
+  experienceId?: string | null;
+  experienceName?: string | null;
+  projectId?: string | null;
+  badgeId?: string | null;
+  taskId?: string | null;
+  version?: string | null;
+  ip?: string | null;
+  userAgent?: string | null;
+  tags?: string[] | null;
+  skills?: string[] | null;
   pathway?:
     | "policy & government"
     | "arts & culture"
     | "college & career"
     | "volunteer"
-    | "recreation";
-  milestone?: boolean;
-  quality?: number;
-  observedAt?: string;
+    | "recreation" | null;
+  milestone?: boolean | null;
+  quality?: number | null;
+  observedAt?: string | null;
 };
 
 /**
  * The action query.
  */
 export type ActionQuery = {
-  [key: string]: string | number | string[] | undefined;
-  actionName?: string;
-  experienceId?: string;
-  experienceName?: string;
-  badgeId?: string;
-  taskId?: string;
-  day?: string;
-  period?: "month" | "day" | "week";
-  limit?: number;
-  page?: number;
-  fields?: string[];
+  actionName?: string | null;
+  experienceId?: string | null;
+  experienceName?: string | null;
+  badgeId?: string | null;
+  taskId?: string | null;
+  day?: string | null;
+  period?: "month" | "day" | "week" | null;
+  limit?: number | null;
+  page?: number | null;
+  fields?: string[] | null;
 };
 
 /**

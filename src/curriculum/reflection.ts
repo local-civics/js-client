@@ -4,24 +4,24 @@ import { AxiosRequestConfig } from "axios";
  * The reflection.
  */
 export type Reflection = {
-  communityId?: string;
-  residentId?: string;
-  experienceName?: string;
-  confidence?: number;
-  feedback?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  communityId?: string | null;
+  residentId?: string | null;
+  experienceName?: string | null;
+  confidence?: number | null;
+  feedback?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 };
 
 /**
  * The reflection query.
  */
 export type ReflectionQuery = {
-  residentName?: string;
-  experienceName?: string;
-  limit?: number;
-  page?: number;
-  fields?: string[];
+  residentName?: string | null;
+  experienceName?: string | null;
+  limit?: number | null;
+  page?: number | null;
+  fields?: string[] | null;
 };
 
 /**

@@ -4,59 +4,59 @@ import { AxiosRequestConfig } from "axios";
  * The experience.
  */
 export type Experience = {
-  experienceId?: string;
-  experienceName?: string;
-  communityId?: string;
-  displayName?: string;
-  summary?: string;
-  address?: string;
-  imageURL?: string;
-  externalURL?: string;
-  registrationURL?: string;
-  notBefore?: string;
-  notAfter?: string;
-  format?: "online" | "in-person";
-  latitude?: number;
-  longitude?: number;
-  milestone?: boolean;
-  tags?: string[];
-  skills?: string[];
+  experienceId?: string | null;
+  experienceName?: string | null;
+  communityId?: string | null;
+  displayName?: string | null;
+  summary?: string | null;
+  address?: string | null;
+  imageURL?: string | null;
+  externalURL?: string | null;
+  registrationURL?: string | null;
+  notBefore?: string | null;
+  notAfter?: string | null;
+  format?: "online" | "in-person" | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  milestone?: boolean | null;
+  tags?: string[] | null;
+  skills?: string[] | null;
   pathway?:
     | "policy & government"
     | "arts & culture"
     | "college & career"
     | "volunteer"
-    | "recreation";
-  quality?: number;
-  priority?: number;
-  distance?: number;
-  createdAt?: string;
-  updatedAt?: string;
+    | "recreation" | null;
+  quality?: number | null;
+  priority?: number | null;
+  distance?: number | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 };
 
 /**
  * The experience query.
  */
 export type ExperienceQuery = {
-  experienceName?: string;
-  displayName?: string;
-  day?: string;
-  tags?: string[];
-  skills?: string[];
-  milestone?: boolean;
+  experienceName?: string | null;
+  displayName?: string | null;
+  day?: string | null;
+  tags?: string[] | null;
+  skills?: string[] | null;
+  milestone?: boolean | null;
   pathways?: (
     | "policy & government"
     | "arts & culture"
     | "college & career"
     | "volunteer"
     | "recreation"
-  )[];
-  latitude?: number;
-  longitude?: number;
-  orderBy?: "top" | "soonest";
-  limit?: number;
-  page?: number;
-  fields?: string[];
+  )[] | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  orderBy?: "top" | "soonest" | null;
+  limit?: number | null;
+  page?: number | null;
+  fields?: string[] | null;
 };
 
 /**
