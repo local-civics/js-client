@@ -5,23 +5,23 @@ import { Project } from "./project";
  * The badge.
  */
 export type Badge = {
-  badgeId?: string | null;
-  badgeName?: string | null;
-  communityId?: string | null;
-  displayName?: string | null;
-  summary?: string | null;
-  imageURL?: string | null;
-  prerequisite?: string | null;
+  badgeId?: string;
+  badgeName?: string;
+  communityId?: string;
+  displayName?: string;
+  summary?: string;
+  imageURL?: string;
+  prerequisite?: string;
   pathway?:
     | "policy & government"
     | "arts & culture"
     | "college & career"
     | "volunteer"
-    | "recreation" | null;
-  projects?: Project[] | null;
-  status?: "in-progress" | "todo" | "done" | null;
-  createdAt?: string | null;
-  updatedAt?: string | null;
+    | "recreation";
+  projects?: Project[];
+  status?: "in-progress" | "todo" | "done";
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 /**

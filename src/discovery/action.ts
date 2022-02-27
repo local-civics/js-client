@@ -4,30 +4,30 @@ import { AxiosRequestConfig } from "axios";
  * The action.
  */
 export type Action = {
-  actionId?: string | null;
-  actionName?: string | null;
-  communityId?: string | null;
-  residentId?: string | null;
-  peerId?: string | null;
-  experienceId?: string | null;
-  experienceName?: string | null;
-  projectId?: string | null;
-  badgeId?: string | null;
-  taskId?: string | null;
-  version?: string | null;
-  ip?: string | null;
-  userAgent?: string | null;
-  tags?: string[] | null;
-  skills?: string[] | null;
+  actionId?: string;
+  actionName?: string;
+  communityId?: string;
+  residentId?: string;
+  peerId?: string;
+  experienceId?: string;
+  experienceName?: string;
+  projectId?: string;
+  badgeId?: string;
+  taskId?: string;
+  version?: string;
+  ip?: string;
+  userAgent?: string;
+  tags?: string[];
+  skills?: string[];
   pathway?:
     | "policy & government"
     | "arts & culture"
     | "college & career"
     | "volunteer"
-    | "recreation" | null;
-  milestone?: boolean | null;
-  quality?: number | null;
-  observedAt?: string | null;
+    | "recreation";
+  milestone?: boolean;
+  quality?: number;
+  observedAt?: string;
 };
 
 /**

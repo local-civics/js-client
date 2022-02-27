@@ -4,14 +4,14 @@ import { AxiosRequestConfig } from "axios";
  * The resident.
  */
 export type Resident = {
-  residentId?: string | null;
-  openId?: string | null;
-  residentName?: string | null;
-  email?: string | null;
-  givenName?: string | null;
-  familyName?: string | null;
-  communityName?: string | null;
-  role?: "educator" | "student" | "management" | null;
+  residentId?: string;
+  openId?: string;
+  residentName?: string;
+  email?: string;
+  givenName?: string;
+  familyName?: string;
+  communityName?: string;
+  role?: "educator" | "student" | "management";
   subject?:
     | "social studies"
     | "english"
@@ -20,25 +20,25 @@ export type Resident = {
     | "special education"
     | "counseling | college & career readiness"
     | "non-instructional staff"
-    | "school leadership" | null;
-  grade?: number | null;
-  tags?: string[] | null;
-  interests?: string[] | null;
-  impactStatement?: string | null;
-  avatarURL?: string | null;
-  createdAt?: string | null;
-  updatedAt?: string | null;
-  lastLoginAt?: string | null;
+    | "school leadership";
+  grade?: number;
+  tags?: string[];
+  interests?: string[];
+  impactStatement?: string;
+  avatarURL?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  lastLoginAt?: string;
 };
 
 /**
  * The resident query.
  */
 export type ResidentQuery = {
-  residentName?: string | null;
-  limit?: number | null;
-  page?: number | null;
-  fields?: string[] | null;
+  residentName?: string;
+  limit?: number;
+  page?: number;
+  fields?: string[];
 };
 
 /**

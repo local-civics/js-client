@@ -4,34 +4,34 @@ import { AxiosRequestConfig } from "axios";
  * The experience.
  */
 export type Experience = {
-  experienceId?: string | null;
-  experienceName?: string | null;
-  communityId?: string | null;
-  displayName?: string | null;
-  summary?: string | null;
-  address?: string | null;
-  imageURL?: string | null;
-  externalURL?: string | null;
-  registrationURL?: string | null;
-  notBefore?: string | null;
-  notAfter?: string | null;
-  format?: "online" | "in-person" | null;
-  latitude?: number | null;
-  longitude?: number | null;
-  milestone?: boolean | null;
-  tags?: string[] | null;
-  skills?: string[] | null;
+  experienceId?: string;
+  experienceName?: string;
+  communityId?: string;
+  displayName?: string;
+  summary?: string;
+  address?: string;
+  imageURL?: string;
+  externalURL?: string;
+  registrationURL?: string;
+  notBefore?: string;
+  notAfter?: string;
+  format?: "online" | "in-person";
+  latitude?: number;
+  longitude?: number;
+  milestone?: boolean;
+  tags?: string[];
+  skills?: string[];
   pathway?:
     | "policy & government"
     | "arts & culture"
     | "college & career"
     | "volunteer"
-    | "recreation" | null;
-  quality?: number | null;
-  priority?: number | null;
-  distance?: number | null;
-  createdAt?: string | null;
-  updatedAt?: string | null;
+    | "recreation";
+  quality?: number;
+  priority?: number;
+  distance?: number;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 /**

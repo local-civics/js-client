@@ -4,35 +4,35 @@ import { AxiosRequestConfig } from "axios";
  * The report.
  */
 export type Report = {
-  communityId?: string | null;
-  residentId?: string | null;
-  experienceId?: string | null;
-  projectId?: string | null;
-  badgeId?: string | null;
-  degree?: number | null;
-  quality?: number | null;
-  nextPromotion?: number | null;
-  badges?: number | null;
-  milestones?: number | null;
-  reflections?: number | null;
-  registrations?: number | null;
+  communityId?: string;
+  residentId?: string;
+  experienceId?: string;
+  projectId?: string;
+  badgeId?: string;
+  degree?: number;
+  quality?: number;
+  nextPromotion?: number;
+  badges?: number;
+  milestones?: number;
+  reflections?: number;
+  registrations?: number;
   pathway?:
     | "policy & government"
     | "arts & culture"
     | "college & career"
     | "volunteer"
-    | "recreation" | null;
+    | "recreation";
   pathways?: (
     | "policy & government"
     | "arts & culture"
     | "college & career"
     | "volunteer"
     | "recreation"
-  )[] | null;
-  skills?: string[] | null;
-  tags?: string[] | null;
-  tasks?: number | null;
-  activity?: number | null;
+  )[];
+  skills?: string[];
+  tags?: string[];
+  tasks?: number;
+  activity?: number;
 };
 
 /**

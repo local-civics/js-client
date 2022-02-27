@@ -4,13 +4,13 @@ import { AxiosRequestConfig } from "axios";
  * The reflection.
  */
 export type Reflection = {
-  communityId?: string | null;
-  residentId?: string | null;
-  experienceName?: string | null;
-  confidence?: number | null;
-  feedback?: string | null;
-  createdAt?: string | null;
-  updatedAt?: string | null;
+  communityId?: string;
+  residentId?: string;
+  experienceName?: string;
+  confidence?: number;
+  feedback?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 /**
