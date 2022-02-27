@@ -4,24 +4,24 @@ import { AxiosRequestConfig } from "axios";
  * The registration.
  */
 export type Registration = {
-  communityId?: string | null;
-  residentId?: string | null;
-  experienceName?: string | null;
-  email?: string | null;
-  givenName?: string | null;
-  originURL?: string | null;
-  notAfter?: string | null;
-  createdAt?: string | null;
+  communityId?: string;
+  residentId?: string;
+  experienceName?: string;
+  email?: string;
+  givenName?: string;
+  originURL?: string;
+  notAfter?: string;
+  createdAt?: string;
 };
 
 /**
  * The registration query.
  */
 export type RegistrationQuery = {
-  experienceName?: string | null;
-  limit?: number | null;
-  page?: number | null;
-  fields?: string[] | null;
+  experienceName?: string;
+  limit?: number;
+  page?: number;
+  fields?: string[];
 };
 
 /**
