@@ -56,7 +56,7 @@ export const client = (config?: {
             }
             searchParams.append(key, p);
           }
-        } else if(param === 'undefined' || param === 'null' || !param) {
+        } else if(!(param === 'undefined' || param === 'null' || !param)) {
           searchParams.append(key, param);
         }
       }
