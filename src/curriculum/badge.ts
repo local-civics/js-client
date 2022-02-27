@@ -5,35 +5,35 @@ import { Project } from "./project";
  * The badge.
  */
 export type Badge = {
-  badgeId?: string;
-  badgeName?: string;
-  communityId?: string;
-  displayName?: string;
-  summary?: string;
-  imageURL?: string;
-  prerequisite?: string;
+  badgeId?: string | null;
+  badgeName?: string | null;
+  communityId?: string | null;
+  displayName?: string | null;
+  summary?: string | null;
+  imageURL?: string | null;
+  prerequisite?: string | null;
   pathway?:
     | "policy & government"
     | "arts & culture"
     | "college & career"
     | "volunteer"
-    | "recreation";
-  projects?: Project[];
-  status?: "in-progress" | "todo" | "done";
-  createdAt?: string;
-  updatedAt?: string;
+    | "recreation" | null;
+  projects?: Project[] | null;
+  status?: "in-progress" | "todo" | "done" | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 };
 
 /**
  * The badge query.
  */
 export type BadgeQuery = {
-  residentName?: string;
-  badgeName?: string;
-  displayName?: string;
-  limit?: number;
-  page?: number;
-  fields?: string[];
+  residentName?: string | null;
+  badgeName?: string | null;
+  displayName?: string | null;
+  limit?: number | null;
+  page?: number | null;
+  fields?: string[] | null;
 };
 
 /**

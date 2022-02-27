@@ -51,9 +51,12 @@ export const client = (config?: {
         const param = params[key];
         if (Array.isArray(param)) {
           for (const p of param) {
+            if(p === 'undefined' || p === 'null' || !p){
+              continue
+            }
             searchParams.append(key, p);
           }
-        } else {
+        } else if(param === 'undefined' || param === 'null' || !param) {
           searchParams.append(key, param);
         }
       }

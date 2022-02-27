@@ -4,37 +4,37 @@ import { AxiosRequestConfig } from "axios";
  * The community.
  */
 export type Community = {
-  communityId?: string;
-  communityName?: string;
-  displayName?: string;
-  country?: string;
-  state?: string;
-  postalCodes?: string[];
-  area?: CommunityArea;
-  placeName?: string;
-  avatarURL?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  communityId?: string | null;
+  communityName?: string | null;
+  displayName?: string | null;
+  country?: string | null;
+  state?: string | null;
+  postalCodes?: string[] | null;
+  area?: CommunityArea | null;
+  placeName?: string | null;
+  avatarURL?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 };
 
 /**
  * Community area
  */
 export type CommunityArea = {
-  latitude?: number;
-  longitude?: number;
-  radius?: number;
+  latitude?: number | null;
+  longitude?: number | null;
+  radius?: number | null;
 };
 
 /**
  * The community query.
  */
 export type CommunityQuery = {
-  displayName?: string;
-  communityName?: string;
-  limit?: number;
-  page?: number;
-  fields?: string[];
+  displayName?: string | null;
+  communityName?: string | null;
+  limit?: number | null;
+  page?: number | null;
+  fields?: string[] | null;
 };
 
 /**
