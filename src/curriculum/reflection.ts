@@ -53,6 +53,13 @@ export const reflectionService = (
         data: reflection,
       });
     },
+    update: async (residentName: string, experienceName: string, reflection: Reflection) => {
+      return client.request({
+        method: "PATCH",
+        url: `/curriculum/v${version}/residents/${residentName}/reflections/${experienceName}`,
+        data: reflection,
+      });
+    },
     remove: async (residentName: string, experienceName: string) => {
       return client.request({
         method: "DELETE",
