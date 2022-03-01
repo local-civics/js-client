@@ -98,13 +98,12 @@ export const residentService = (
       }
 
       if (resident.avatarFile !== undefined) {
+        const data = new FormData()
+        data.append('avatar', resident.avatarFile)
         await client.request({
           method: "PUT",
           url: `/identity/v${version}/residents/${residentName}/avatar`,
-          headers: { "Content-Type": "multipart/form-data" },
-          data: {
-            avatar: resident.avatarFile,
-          },
+          data: data,
         });
 
         delete resident.avatarFile;
