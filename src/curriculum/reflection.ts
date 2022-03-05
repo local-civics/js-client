@@ -9,9 +9,20 @@ export type Reflection = {
   experienceName?: string;
   confidence?: number;
   feedback?: string;
+  comments?: Comment[];
   createdAt?: string;
   updatedAt?: string;
 };
+
+/**
+ * The reflection comment.
+ */
+export type Comment = {
+  slideNumber?: number;
+  imageURL?: string;
+  choiceNumber?: number;
+  body?: string;
+}
 
 /**
  * The reflection query.
