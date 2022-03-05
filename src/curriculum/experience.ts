@@ -28,11 +28,25 @@ export type Experience = {
     | "volunteer"
     | "recreation";
   quality?: number;
+  presentation?: Slide[];
   priority?: number;
   distance?: number;
   createdAt?: string;
   updatedAt?: string;
 };
+
+/** Embedded presentation. */
+export type Slide = {
+  title?: string;
+  embedURL?: string;
+  asynchronous?: boolean;
+  response?: {
+    required?: boolean;
+    upload?: boolean;
+    minimumLength?: number;
+    choices?: any[];
+  }
+}
 
 /**
  * The experience query.
@@ -44,6 +58,7 @@ export type ExperienceQuery = {
   tags?: string[] | null;
   skills?: string[] | null;
   milestone?: boolean | null;
+  presentation?: boolean | null;
   pathways?: (
     | "policy & government"
     | "arts & culture"
