@@ -61,7 +61,7 @@ export const identityService = (
         newSubject?: string;
         newRole?: string;
         newImpactStatement?: string;
-        newInterests?: string;
+        newInterests?: string[];
         newAvatar?: Blob;
       }
     ) => {
