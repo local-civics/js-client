@@ -11,7 +11,7 @@ export type WorkspaceView = {
 };
 
 export type BadgePreview = {
-  id?: string;
+  id?: number;
   marketId?: string;
   headline?: string;
   summary?: string;
@@ -20,6 +20,7 @@ export type BadgePreview = {
 };
 
 export type TaskView = {
+  id?: number
   title?: string;
   marketId?: string;
   badgeId?: number;
