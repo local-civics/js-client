@@ -39,7 +39,7 @@ export const identityService = (
   return {
     digest: async () => {
       const data = await client.request({
-        method: "GET",
+        method: "PATCH",
         url: `/identity/v${version}/digest`,
       });
       return data as TenantPreview;
