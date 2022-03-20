@@ -104,11 +104,6 @@ export type BadgeView = {
   done?: TaskView[];
 };
 
-/**
- * The experience service.
- * @param client
- * @param version
- */
 export const curriculumService = (
   client: { request: (conf: AxiosRequestConfig) => Promise<any> },
   version: number
