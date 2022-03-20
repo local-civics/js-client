@@ -8,7 +8,7 @@ export type TenantPreview = {
   email?: string;
   givenName?: string;
   familyName?: string;
-  grade?: string;
+  grade?: number;
   subject?: string;
   role?: string;
   statement?: string;
