@@ -1,14 +1,6 @@
 import * as Sentry from "@sentry/browser";
 import axios, { AxiosRequestConfig } from "axios";
-import {
-  badgeService,
-  reflectionService,
-  taskService,
-  experienceService,
-  registrationService,
-} from "./curriculum";
-import { actionService, reportService } from "./discovery";
-import { communityService, residentService } from "./identity";
+import { identityService, curriculumService } from "./api";
 
 /**
  * The semver version of the library.
@@ -22,7 +14,7 @@ export type Client = ReturnType<typeof client>;
 
 // The js client for Local Platform APIs
 export const client = (config?: {
-  apiURL?: string
+  apiURL?: string;
   accessToken?: string;
   majorVersion?: number;
   onReject?: (err: any) => any;
@@ -37,7 +29,7 @@ export const client = (config?: {
 
   const client = axios.create({
     baseURL: (() => {
-      if(!config?.apiURL){
+      if (!config?.apiURL) {
         return "https://dev.api.localcivics.io";
       }
 
@@ -51,17 +43,17 @@ export const client = (config?: {
         const param = params[key];
         if (Array.isArray(param)) {
           for (const p of param) {
-            if(p === 'undefined' || p === 'null' || !p){
-              continue
+            if (p === "undefined" || p === "null" || !p) {
+              continue;
             }
             searchParams.append(key, p);
           }
-        } else if(!(param === 'undefined' || param === 'null' || !param)) {
+        } else if (!(param === "undefined" || param === "null" || !param)) {
           searchParams.append(key, param);
         }
       }
       return searchParams.toString();
-    }
+    },
   });
 
   client.interceptors.response.use(
@@ -86,27 +78,21 @@ export const client = (config?: {
   );
 
   const major = config?.majorVersion || 0;
-  const request = async (r: AxiosRequestConfig) => client.request(r).catch(e => {
-    if(config?.onReject){
-      return config.onReject(e)
-    }
-    return Promise.reject(e)
-  })
+  const request = async (r: AxiosRequestConfig) =>
+    client.request(r).catch((e) => {
+      if (config?.onReject) {
+        return config.onReject(e);
+      }
+      return Promise.reject(e);
+    });
 
   const hoc = {
     request,
   };
 
   return {
-    residents: residentService(hoc, major),
-    experiences: experienceService(hoc, major),
-    communities: communityService(hoc, major),
-    registrations: registrationService(hoc, major),
-    badges: badgeService(hoc, major),
-    tasks: taskService(hoc, major),
-    reflections: reflectionService(hoc, major),
-    actions: actionService(hoc, major),
-    reports: reportService(hoc, major),
+    identity: identityService(hoc, major),
+    curriculum: curriculumService(hoc, major),
   };
 };
 
