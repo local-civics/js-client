@@ -156,7 +156,7 @@ export const curriculumService = (
     },
     viewWorkspaceActivities: async (
       workspaceName: string,
-      query?: { pathways?: string[]; skills?: string[]; tags?: string[] }
+      query?: { activityName?: string, pathways?: string[]; skills?: string[]; tags?: string[] }
     ) => {
       const data = await client.request({
         method: "GET",
