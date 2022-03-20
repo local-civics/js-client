@@ -83,9 +83,11 @@ export type ActivityView = {
   latitude?: number;
   longitude?: number;
   tags?: string[];
+  milestone?: boolean
   startTime?: string;
   minutes?: number;
   priority?: number;
+  xp?: number
   reaction?: ReactionView;
 };
 
