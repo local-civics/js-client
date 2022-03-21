@@ -157,20 +157,20 @@ export const curriculumService = (
       return data as WorkspaceView;
     },
     viewMarketplaceActivities: async (
-      organizationName: string,
+      marketName: string,
       query?: { activityName?: string, pathways?: string[]; skills?: string[]; tags?: string[] }
     ) => {
       const data = await client.request({
         method: "GET",
-        url: `/curriculum/v${version}/marketplace/${organizationName}/activities`,
+        url: `/curriculum/v${version}/marketplace/${marketName}/activities`,
         params: query,
       });
       return data as WorkspaceActivitiesView;
     },
-    viewMarketplaceCalendar: async (workspaceName: string, day: string) => {
+    viewMarketplaceCalendar: async (marketName: string, day: string) => {
       const data = await client.request({
         method: "GET",
-        url: `/curriculum/v${version}/marketplace/${workspaceName}/calendar/day:${day}`,
+        url: `/curriculum/v${version}/marketplace/${marketName}/calendar/day:${day}`,
       });
       return data as WorkspaceCalendarView;
     },
