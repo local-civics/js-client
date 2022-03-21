@@ -121,7 +121,7 @@ export const curriculumService = (
         focusGroupId?: number;
         openEndedResponse?: string;
         multipleChoiceAnswers?: string[];
-        toggleNotifications?: boolean;
+        notify?: boolean;
         givenName?: string;
         email?: string;
         origin?: string;
