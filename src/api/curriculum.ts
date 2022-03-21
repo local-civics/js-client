@@ -156,13 +156,13 @@ export const curriculumService = (
       });
       return data as WorkspaceView;
     },
-    viewWorkspaceActivities: async (
-      workspaceName: string,
+    viewMarketplaceActivities: async (
+      organizationName: string,
       query?: { activityName?: string, pathways?: string[]; skills?: string[]; tags?: string[] }
     ) => {
       const data = await client.request({
         method: "GET",
-        url: `/curriculum/v${version}/workspaces/tenant:${workspaceName}/activities`,
+        url: `/curriculum/v${version}/marketplace/${organizationName}/activities`,
         params: query,
       });
       return data as WorkspaceActivitiesView;
@@ -170,7 +170,7 @@ export const curriculumService = (
     viewWorkspaceCalendar: async (workspaceName: string, day: string) => {
       const data = await client.request({
         method: "GET",
-        url: `/curriculum/v${version}/workspaces/tenant:${workspaceName}/calendar/day:${day}`,
+        url: `/curriculum/v${version}/marketplace/${workspaceName}/calendar/day:${day}`,
       });
       return data as WorkspaceCalendarView;
     },
