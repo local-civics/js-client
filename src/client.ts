@@ -79,7 +79,9 @@ export const client = (config?: {
     }
   );
 
-  axiosRetry(axios, {retries: config?.retries || 3, retryDelay: axiosRetry.exponentialDelay})
+  axiosRetry(axios, {retries: config?.retries || 3, retryDelay: axiosRetry.exponentialDelay, retryCondition: (error) => {
+      return !!error.response && (error.response.status >= 500 || error.response.status === 429 || error.response.status === 401)
+  }})
 
   const major = config?.majorVersion || 0;
   const request = async (r: AxiosRequestConfig) =>
