@@ -1,6 +1,7 @@
 import * as Sentry from "@sentry/browser";
 import axios, { AxiosRequestConfig } from "axios";
 import { identityService, curriculumService } from "./api";
+import axiosRetry                             from "axios-retry";
 
 /**
  * The semver version of the library.
@@ -17,6 +18,7 @@ export const client = (config?: {
   apiURL?: string;
   accessToken?: string;
   majorVersion?: number;
+  retries?: number
   onReject?: (err: any) => any;
 }) => {
   /**
@@ -76,6 +78,8 @@ export const client = (config?: {
       return Promise.reject(error);
     }
   );
+
+  axiosRetry(axios, {retries: config?.retries || 3, retryDelay: axiosRetry.exponentialDelay})
 
   const major = config?.majorVersion || 0;
   const request = async (r: AxiosRequestConfig) =>
