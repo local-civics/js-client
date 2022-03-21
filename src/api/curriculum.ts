@@ -158,7 +158,7 @@ export const curriculumService = (
     },
     viewMarketplaceActivities: async (
       marketName: string,
-      query?: { activityName?: string, pathways?: string[]; skills?: string[]; tags?: string[] }
+      query?: { name?: string, pathways?: string[]; skills?: string[]; tags?: string[] }
     ) => {
       const data = await client.request({
         method: "GET",
