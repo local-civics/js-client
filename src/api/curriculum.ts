@@ -149,10 +149,11 @@ export const curriculumService = (
         url: `/curriculum/v${version}/workspaces/tenant:${workspaceName}/badges/${marketName}:${badgeId}.${level}`,
       });
     },
-    viewWorkspace: async (workspaceName: string) => {
+    viewWorkspace: async (tenantName: string, organizationName: string) => {
+      const workspaceName = organizationName ? `${tenantName}@${organizationName}` : `tenant:${tenantName}`
       const data = await client.request({
         method: "GET",
-        url: `/curriculum/v${version}/workspaces/tenant:${workspaceName}`,
+        url: `/curriculum/v${version}/workspaces/${workspaceName}`,
       });
       return data as WorkspaceView;
     },
@@ -187,14 +188,16 @@ export const curriculumService = (
       return data as ActivityView;
     },
     viewWorkspaceBadge: async (
-      workspaceName: string,
+      tenantName: string,
+      organizationName: string,
       marketName: string,
       badgeId: number,
       level: number
     ) => {
+      const workspaceName = organizationName ? `${tenantName}@${organizationName}` : `tenant:${tenantName}`
       const data = await client.request({
         method: "GET",
-        url: `/curriculum/v${version}/workspaces/tenant:${workspaceName}/badges/${marketName}:${badgeId}.${level}`,
+        url: `/curriculum/v${version}/workspaces/${workspaceName}/badges/${marketName}:${badgeId}.${level}`,
       });
 
       return data as BadgeView;
