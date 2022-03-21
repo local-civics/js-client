@@ -167,7 +167,7 @@ export const curriculumService = (
       });
       return data as WorkspaceActivitiesView;
     },
-    viewWorkspaceCalendar: async (workspaceName: string, day: string) => {
+    viewMarketplaceCalendar: async (workspaceName: string, day: string) => {
       const data = await client.request({
         method: "GET",
         url: `/curriculum/v${version}/marketplace/${workspaceName}/calendar/day:${day}`,
