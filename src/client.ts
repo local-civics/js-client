@@ -1,75 +1,78 @@
 import * as Sentry from "@sentry/browser";
-import axios, { AxiosRequestConfig } from "axios";
-import { identityService, curriculumService } from "./api";
-import axiosRetry                             from "axios-retry";
+import axios from "axios";
 
 /**
  * The semver version of the library.
  */
-export const version = require("../package.json").version;
+export const VERSION = require("../package.json").version;
+
+/**
+ * The API service name
+ */
+export type Service = "curriculum" | "identity" | "discovery" | "media";
+
+/**
+ * The API request method
+ */
+export type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+
+/**
+ * The client configuration
+ */
+export type ClientConfig = {
+  gatewayURL?: string;
+  version?: number;
+  retries?: number;
+  timeout?: number;
+  onReject?: (err: any) => any;
+};
+
+/**
+ * The API request options
+ */
+export type RequestOptions = {
+  referrer: string;
+  query?: any;
+  body?: any;
+  endpoint?: string;
+};
 
 /**
  * Type for the client.
  */
-export type Client = ReturnType<typeof client>;
+export type Client = ReturnType<typeof init>;
 
 // The js client for Local Platform APIs
-export const client = (config?: {
-  apiURL?: string;
-  accessToken?: string;
-  majorVersion?: number;
-  retries?: number
-  onReject?: (err: any) => any;
-}) => {
-  /**
-   * Headers sent with client
-   */
+export const init = (accessToken?: string, config?: ClientConfig) => {
+  const version = config?.version || 1;
   const headers: { [key: string]: any } = {};
-  if (config?.accessToken) {
-    headers["Authorization"] = `Bearer ${config?.accessToken}`;
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
   }
 
+  const timeout = config?.timeout || 5000;
   const client = axios.create({
-    baseURL: (() => {
-      if (!config?.apiURL) {
-        return "https://dev.api.localcivics.io";
-      }
-
-      return config.apiURL;
-    })(),
-    timeout: 5000,
+    timeout: timeout,
     headers: headers,
-    paramsSerializer(params) {
-      const searchParams = new URLSearchParams();
-      for (const key of Object.keys(params)) {
-        const param = params[key];
-        if (Array.isArray(param)) {
-          for (const p of param) {
-            if (p === "undefined" || p === "null" || !p) {
-              continue;
-            }
-            searchParams.append(key, p);
-          }
-        } else if (!(param === "undefined" || param === "null" || !param)) {
-          searchParams.append(key, param);
-        }
-      }
-      return searchParams.toString();
-    },
+    paramsSerializer: serializeParams,
   });
 
   client.interceptors.response.use(
     (response) => response.data,
     (error) => {
-      if (error.response) {
-        error = new RequestError(
-          error.response.status,
-          error.response.data,
-          error
-        );
+      let message: string = "";
+      if (Object.keys(error.response.data).length > 0) {
+        message = error.response.data;
       }
 
-      Sentry.captureException(error);
+      if (error.response) {
+        error = new RequestError(error.response.status, message, error);
+      }
+
+      const status = ErrorCode(error);
+      if (!status || status > 499) {
+        Sentry.captureException(error);
+      }
 
       if (config?.onReject) {
         return config.onReject(error);
@@ -79,26 +82,25 @@ export const client = (config?: {
     }
   );
 
-  axiosRetry(axios, {retries: config?.retries || 3, retryDelay: axiosRetry.exponentialDelay, retryCondition: (error) => {
-      return !!error.response && (error.response.status >= 500 || error.response.status === 429 || error.response.status === 401)
-  }})
-
-  const major = config?.majorVersion || 0;
-  const request = async (r: AxiosRequestConfig) =>
-    client.request(r).catch((e) => {
-      if (config?.onReject) {
-        return config.onReject(e);
-      }
-      return Promise.reject(e);
-    });
-
-  const hoc = {
-    request,
-  };
-
   return {
-    identity: identityService(hoc, major),
-    curriculum: curriculumService(hoc, major),
+    do: async (
+      method: Method,
+      service: Service,
+      endpoint: string,
+      options?: RequestOptions
+    ) => {
+      const path = endpoint
+        .split("/")
+        .filter((dir) => dir)
+        .join("/");
+      return client.request({
+        method,
+        url: `/${service}/v${version}/${path}`,
+        params: options?.query,
+        data: options?.body,
+        headers: options?.referrer ? { referrer: options.referrer } : undefined,
+      });
+    },
   };
 };
 
@@ -108,6 +110,7 @@ export const client = (config?: {
 class RequestError extends Error {
   public readonly cause: Error;
   public readonly code: number;
+  public readonly message: string;
 
   constructor(code: number, message: string, cause?: Error) {
     super(message);
@@ -116,34 +119,60 @@ class RequestError extends Error {
       Error.captureStackTrace(this, RequestError);
     }
 
+    this.cause = this;
+    if (cause) {
+      this.cause = cause;
+    }
     this.code = code;
-    this.cause = cause || this;
+    this.message = message;
   }
 }
 
 /**
- * Check if error is not authorized.
+ * Get error code
  * @param error
  * @constructor
  */
-export const IsNotAuthorized = (error: Error) => {
-  return error instanceof RequestError && error.code === 401;
+export const ErrorCode = (error: Error) => {
+  let code: number = 0;
+  if (error instanceof RequestError) {
+    code = error.code;
+  }
+  return code;
 };
 
 /**
- * Check if error is bad request.
+ * Get error message
  * @param error
  * @constructor
  */
-export const IsBadRequest = (error: Error) => {
-  return error instanceof RequestError && error.code === 400;
+export const ErrorMessage = (error: Error) => {
+  let message: string = "";
+  if (error instanceof RequestError) {
+    message = error.message;
+  }
+
+  return message;
 };
 
 /**
- * Check if error is not found.
- * @param error
- * @constructor
+ * Custom params serializer
+ * @param params
  */
-export const IsNotFound = (error: Error) => {
-  return error instanceof RequestError && error.code === 404;
+const serializeParams = (params: any) => {
+  const searchParams = new URLSearchParams();
+  for (const key of Object.keys(params)) {
+    const param = params[key];
+    if (Array.isArray(param)) {
+      for (const p of param) {
+        if (p === "undefined" || p === "null" || !p) {
+          continue;
+        }
+        searchParams.append(key, p);
+      }
+    } else if (!(param === "undefined" || param === "null" || !param)) {
+      searchParams.append(key, param);
+    }
+  }
+  return searchParams.toString();
 };

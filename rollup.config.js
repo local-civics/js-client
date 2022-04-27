@@ -2,13 +2,14 @@ import pkg from "./package.json";
 
 import commonjs from "@rollup/plugin-commonjs";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
-import resolve from "@rollup/plugin-node-resolve";
-import typescript from "rollup-plugin-typescript2";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
+import typescript from "@rollup/plugin-typescript";
 import { terser } from "rollup-plugin-terser";
+import nodePolyfills from "rollup-plugin-polyfill-node";
 
 const cfg = [
   {
-    input: "./src/index.js",
+    input: "./src/index.ts",
     output: [
       {
         file: pkg.main,
@@ -23,11 +24,12 @@ const cfg = [
     ],
     plugins: [
       peerDepsExternal(),
-      resolve(),
       commonjs(),
-      typescript({
-        clean: true,
+      nodePolyfills(),
+      nodeResolve({
+        preferBuiltins: false,
       }),
+      typescript(),
       terser(),
     ],
   },
