@@ -13,7 +13,7 @@ beforeAll(() => {
     environment: "test",
     routes() {
       this.get("/identity/v1/hello", () => {
-        return "world";
+        return new Response(200, {}, "world");
       });
 
       this.get("/identity/v1/429", () => {

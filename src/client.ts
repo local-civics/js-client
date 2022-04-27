@@ -40,7 +40,14 @@ export type RequestOptions = {
 /**
  * Type for the client.
  */
-export type Client = ReturnType<typeof init>;
+export type Client = {
+  do: (
+      method: Method,
+      service: Service,
+      endpoint: string,
+      options?: RequestOptions
+  ) => Promise<any>;
+};
 
 // The js client for Local Platform APIs
 export const init = (accessToken?: string, config?: ClientConfig) => {
@@ -82,17 +89,17 @@ export const init = (accessToken?: string, config?: ClientConfig) => {
     }
   );
 
-  return {
+  const api: Client = {
     do: async (
-      method: Method,
-      service: Service,
-      endpoint: string,
-      options?: RequestOptions
+        method: Method,
+        service: Service,
+        endpoint: string,
+        options?: RequestOptions
     ) => {
       const path = endpoint
-        .split("/")
-        .filter((dir) => dir)
-        .join("/");
+          .split("/")
+          .filter((dir) => dir)
+          .join("/");
       return client.request({
         method,
         url: `/${service}/v${version}/${path}`,
@@ -101,7 +108,9 @@ export const init = (accessToken?: string, config?: ClientConfig) => {
         headers: options?.referrer ? { referrer: options.referrer } : undefined,
       });
     },
-  };
+  }
+
+  return api;
 };
 
 /**
