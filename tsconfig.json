@@ -6,7 +6,7 @@
     "module": "esnext",
     "target": "es6",
     "allowJs": true,
-    "outDir": "dist",
+    "outDir": "",
     "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

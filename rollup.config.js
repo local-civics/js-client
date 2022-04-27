@@ -29,7 +29,9 @@ const cfg = [
       nodeResolve({
         preferBuiltins: false,
       }),
-      typescript(),
+      typescript({
+        tsconfig: './tsconfig.json',
+      }),
       terser(),
     ],
   },
