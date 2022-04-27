@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { ErrorMessage, ErrorCode, init } from "./client";
+import { errorMessage, errorCode, init } from "./client";
 import { createServer, Registry, Server } from "miragejs";
 import { AnyModels, AnyFactories } from "miragejs/-types";
 import { Response } from "miragejs";
@@ -35,8 +35,8 @@ describe("client", () => {
   it("is ok", async () => {
     const client = init("my-access-token");
     expect(client).not.toBeUndefined();
-    await client.do("GET", "identity", "/hello", {
-      referrer: "https://www.localcivics.io",
+    const ctx = { referrer: "https://www.localcivics.io" };
+    await client.do(ctx, "GET", "identity", "/hello", {
       query: {
         param1: ["", undefined, null, false, true],
         param2: "",
@@ -48,20 +48,22 @@ describe("client", () => {
   it("is not ok (non-fatal)", async () => {
     const client = init("", {
       onReject: (err) => {
-        expect(ErrorMessage(err)).not.toBeUndefined();
-        expect(ErrorCode(err)).toEqual(429);
+        expect(errorMessage(err)).not.toBeUndefined();
+        expect(errorCode(err)).toEqual(429);
       },
     });
     expect(client).not.toBeUndefined();
-    await client.do("GET", "identity", "/429");
+    const ctx = { referrer: "" };
+    await client.do(ctx, "GET", "identity", "/429");
   });
 
   it("is not ok (fatal)", async () => {
     const client = init();
     expect(client).not.toBeUndefined();
-    await client.do("GET", "identity", "/goodbye").catch(() => {});
+    const ctx = { referrer: "" };
+    await client.do(ctx, "GET", "identity", "/goodbye").catch(() => {});
 
     expect(client).not.toBeUndefined();
-    await client.do("GET", "identity", "/500").catch(() => {});
+    await client.do(ctx, "GET", "identity", "/500").catch(() => {});
   });
 });

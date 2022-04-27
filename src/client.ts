@@ -17,6 +17,13 @@ export type Service = "curriculum" | "identity" | "discovery" | "media";
 export type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 /**
+ * The request context
+ */
+export type Context = {
+  referrer: string;
+};
+
+/**
  * The client configuration
  */
 export type ClientConfig = {
@@ -31,7 +38,6 @@ export type ClientConfig = {
  * The API request options
  */
 export type RequestOptions = {
-  referrer: string;
   query?: any;
   body?: any;
   endpoint?: string;
@@ -42,10 +48,11 @@ export type RequestOptions = {
  */
 export type Client = {
   do: (
-      method: Method,
-      service: Service,
-      endpoint: string,
-      options?: RequestOptions
+    ctx: Context,
+    method: Method,
+    service: Service,
+    endpoint: string,
+    options?: RequestOptions
   ) => Promise<any>;
 };
 
@@ -76,7 +83,7 @@ export const init = (accessToken?: string, config?: ClientConfig) => {
         error = new RequestError(error.response.status, message, error);
       }
 
-      const status = ErrorCode(error);
+      const status = errorCode(error);
       if (!status || status > 499) {
         Sentry.captureException(error);
       }
@@ -91,24 +98,25 @@ export const init = (accessToken?: string, config?: ClientConfig) => {
 
   const api: Client = {
     do: async (
-        method: Method,
-        service: Service,
-        endpoint: string,
-        options?: RequestOptions
+      ctx: Context,
+      method: Method,
+      service: Service,
+      endpoint: string,
+      options?: RequestOptions
     ) => {
       const path = endpoint
-          .split("/")
-          .filter((dir) => dir)
-          .join("/");
+        .split("/")
+        .filter((dir) => dir)
+        .join("/");
       return client.request({
         method,
         url: `/${service}/v${version}/${path}`,
         params: options?.query,
         data: options?.body,
-        headers: options?.referrer ? { referrer: options.referrer } : undefined,
+        headers: ctx.referrer ? { referrer: ctx.referrer } : undefined,
       });
     },
-  }
+  };
 
   return api;
 };
@@ -142,7 +150,7 @@ class RequestError extends Error {
  * @param error
  * @constructor
  */
-export const ErrorCode = (error: Error) => {
+export const errorCode = (error: Error) => {
   let code: number = 0;
   if (error instanceof RequestError) {
     code = error.code;
@@ -155,7 +163,7 @@ export const ErrorCode = (error: Error) => {
  * @param error
  * @constructor
  */
-export const ErrorMessage = (error: Error) => {
+export const errorMessage = (error: Error) => {
   let message: string = "";
   if (error instanceof RequestError) {
     message = error.message;

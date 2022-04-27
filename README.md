@@ -20,5 +20,6 @@ and use it, like so
 
 ```
 const client = init("my-access-token")
-const id = client.do("GET", "identity", "my/id")
+const ctx = {referrer: "https://www.localcivics.io"}
+const id = client.do(ctx, "GET", "identity", "my/id")
 ```

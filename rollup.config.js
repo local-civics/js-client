@@ -30,7 +30,7 @@ const cfg = [
         preferBuiltins: false,
       }),
       typescript({
-        tsconfig: './tsconfig.json',
+        tsconfig: "./tsconfig.json",
       }),
       terser(),
     ],
