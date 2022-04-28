@@ -66,6 +66,7 @@ export const init = (accessToken?: string, config?: ClientConfig) => {
 
   const timeout = config?.timeout || 5000;
   const client = axios.create({
+    baseURL: config?.gatewayURL,
     timeout: timeout,
     headers: headers,
     paramsSerializer: serializeParams,
@@ -75,7 +76,7 @@ export const init = (accessToken?: string, config?: ClientConfig) => {
     (response) => response.data,
     (error) => {
       let message: string = "";
-      if (Object.keys(error.response.data).length > 0) {
+      if (error.response && Object.keys(error.response.data).length > 0) {
         message = error.response.data;
       }
 

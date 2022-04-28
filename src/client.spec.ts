@@ -12,6 +12,8 @@ beforeAll(() => {
   server = createServer({
     environment: "test",
     routes() {
+      this.urlPrefix = "https://api.localcivics.io";
+
       this.get("/identity/v1/hello", () => {
         return new Response(200, {}, "world");
       });
@@ -33,7 +35,9 @@ afterAll(() => {
 
 describe("client", () => {
   it("is ok", async () => {
-    const client = init("my-access-token");
+    const client = init("my-access-token", {
+      gatewayURL: "https://api.localcivics.io",
+    });
     expect(client).not.toBeUndefined();
     const ctx = { referrer: "https://www.localcivics.io" };
     await client.do(ctx, "GET", "identity", "/hello", {
@@ -47,6 +51,7 @@ describe("client", () => {
 
   it("is not ok (non-fatal)", async () => {
     const client = init("", {
+      gatewayURL: "https://api.localcivics.io",
       onReject: (err) => {
         expect(errorMessage(err)).not.toBeUndefined();
         expect(errorCode(err)).toEqual(429);
@@ -58,12 +63,18 @@ describe("client", () => {
   });
 
   it("is not ok (fatal)", async () => {
-    const client = init();
+    const client = init("", {
+      gatewayURL: "https://api.localcivics.io"
+    });
     expect(client).not.toBeUndefined();
     const ctx = { referrer: "" };
     await client.do(ctx, "GET", "identity", "/goodbye").catch(() => {});
-
-    expect(client).not.toBeUndefined();
     await client.do(ctx, "GET", "identity", "/500").catch(() => {});
+  });
+
+  it("is not ok (fatal no config)", async () => {
+    const client = init();
+    const ctx = { referrer: "" };
+    await client.do(ctx, "GET", "identity", "/goodbye").catch(() => {});
   });
 });
