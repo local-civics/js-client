@@ -1,100 +1,165 @@
 import * as Sentry from "@sentry/browser";
-import axios, { AxiosRequestConfig } from "axios";
-import { identityService, curriculumService } from "./api";
+import axios, { AxiosInstance } from "axios";
 
 /**
  * The semver version of the library.
  */
-export const version = require("../package.json").version;
+export const VERSION = require("../package.json").version;
 
 /**
- * Type for the client.
+ * The API service name
  */
-export type Client = ReturnType<typeof client>;
+export type ServiceName = "sphere" | "study" | "magnify" | "relay";
 
-// The js client for Local Platform APIs
-export const client = (config?: {
-  apiURL?: string;
+/**
+ * The API request method
+ */
+export type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+
+/**
+ * The client configuration
+ */
+export type ClientConfig = {
   accessToken?: string;
-  majorVersion?: number;
+  gatewayURL?: string;
+  version?: number;
+  retries?: number;
+  ttl?: number;
   onReject?: (err: any) => any;
-}) => {
-  /**
-   * Headers sent with client
-   */
-  const headers: { [key: string]: any } = {};
-  if (config?.accessToken) {
-    headers["Authorization"] = `Bearer ${config?.accessToken}`;
-  }
+};
 
-  const client = axios.create({
-    baseURL: (() => {
-      if (!config?.apiURL) {
-        return "https://dev.api.localcivics.io";
-      }
+/**
+ * The API request options
+ */
+export type RequestOptions = {
+  headers?: any;
+  query?: any;
+  body?: any;
+};
 
-      return config.apiURL;
-    })(),
-    timeout: 5000,
-    headers: headers,
-    paramsSerializer(params) {
-      const searchParams = new URLSearchParams();
-      for (const key of Object.keys(params)) {
-        const param = params[key];
-        if (Array.isArray(param)) {
-          for (const p of param) {
-            if (p === "undefined" || p === "null" || !p) {
-              continue;
-            }
-            searchParams.append(key, p);
-          }
-        } else if (!(param === "undefined" || param === "null" || !param)) {
-          searchParams.append(key, param);
-        }
-      }
-      return searchParams.toString();
-    },
-  });
+/**
+ * Client
+ * The js client for Local Platform APIs
+ */
+export class Client {
+  protected axios: AxiosInstance;
+  protected version: number;
 
-  client.interceptors.response.use(
-    (response) => response.data,
-    (error) => {
-      if (error.response) {
-        error = new RequestError(
-          error.response.status,
-          error.response.data,
-          error
-        );
-      }
+  sphere: Service;
+  study: Service;
+  magnify: Service;
+  relay: Service;
 
-      Sentry.captureException(error);
+  constructor(config?: ClientConfig) {
+    this.version = config?.version || 1;
 
-      if (config?.onReject) {
-        return config.onReject(error);
-      }
-
-      return Promise.reject(error);
+    const headers: { [key: string]: any } = {};
+    if (config?.accessToken) {
+      headers["Authorization"] = `Bearer ${config.accessToken}`;
     }
-  );
 
-  const major = config?.majorVersion || 0;
-  const request = async (r: AxiosRequestConfig) =>
-    client.request(r).catch((e) => {
-      if (config?.onReject) {
-        return config.onReject(e);
-      }
-      return Promise.reject(e);
+    const timeout = config?.ttl || 5000;
+    const client = axios.create({
+      baseURL: config?.gatewayURL,
+      timeout: timeout,
+      headers: headers,
+      paramsSerializer: serializeParams,
     });
 
-  const hoc = {
-    request,
-  };
+    client.interceptors.response.use(
+      (response) => response.data,
+      (error) => {
+        let message: string = "";
+        if (error.response && Object.keys(error.response.data).length > 0) {
+          message = error.response.data;
+        }
 
-  return {
-    identity: identityService(hoc, major),
-    curriculum: curriculumService(hoc, major),
-  };
-};
+        if (error.response) {
+          error = new RequestError(error.response.status, message, error);
+        }
+
+        const status = errorCode(error);
+        if (!status || status > 499) {
+          Sentry.captureException(error);
+        }
+
+        if (config?.onReject) {
+          return config.onReject(error);
+        }
+
+        return Promise.reject(error);
+      }
+    );
+
+    this.axios = client;
+    this.sphere = new Service("sphere", this);
+    this.study = new Service("study", this);
+    this.magnify = new Service("magnify", this);
+    this.relay = new Service("relay", this);
+  }
+
+  do(
+    method: Method,
+    service: ServiceName,
+    endpoint: string,
+    options: RequestOptions
+  ) {
+    const path = endpoint
+      .split("/")
+      .filter((dir) => dir)
+      .join("/");
+    return this.axios.request({
+      method,
+      url: `/${service}/v${this.version}/${path}`,
+      params: options.query,
+      data: options.body,
+      headers: options.headers,
+    });
+  }
+}
+
+/**
+ * Access point for a microservice within the platform
+ */
+export class Service {
+  name: ServiceName;
+  client: Client;
+
+  constructor(name: ServiceName, client: Client) {
+    this.name = name;
+    this.client = client;
+  }
+
+  get(endpoint: string, options?: RequestOptions) {
+    return this.client.do("GET", this.name, endpoint, {
+      ...options,
+    });
+  }
+
+  post(endpoint: string, options?: RequestOptions) {
+    return this.client.do("POST", this.name, endpoint, {
+      ...options,
+    });
+  }
+
+  put(endpoint: string, options?: RequestOptions) {
+    return this.client.do("PUT", this.name, endpoint, {
+      ...options,
+    });
+  }
+
+  patch(endpoint: string, options?: RequestOptions) {
+    return this.client.do("PATCH", this.name, endpoint, {
+      ...options,
+    });
+  }
+
+  delete(endpoint: string, options?: RequestOptions) {
+    return this.client.do("DELETE", this.name, endpoint, {
+      ...options,
+    });
+  }
+}
 
 /**
  * Custom error object for request errors.
@@ -102,6 +167,7 @@ export const client = (config?: {
 class RequestError extends Error {
   public readonly cause: Error;
   public readonly code: number;
+  public readonly message: string;
 
   constructor(code: number, message: string, cause?: Error) {
     super(message);
@@ -110,34 +176,60 @@ class RequestError extends Error {
       Error.captureStackTrace(this, RequestError);
     }
 
+    this.cause = this;
+    if (cause) {
+      this.cause = cause;
+    }
     this.code = code;
-    this.cause = cause || this;
+    this.message = message;
   }
 }
 
 /**
- * Check if error is not authorized.
+ * Get error code
  * @param error
  * @constructor
  */
-export const IsNotAuthorized = (error: Error) => {
-  return error instanceof RequestError && error.code === 401;
+export const errorCode = (error: Error) => {
+  let code: number = 0;
+  if (error instanceof RequestError) {
+    code = error.code;
+  }
+  return code;
 };
 
 /**
- * Check if error is bad request.
+ * Get error message
  * @param error
  * @constructor
  */
-export const IsBadRequest = (error: Error) => {
-  return error instanceof RequestError && error.code === 400;
+export const errorMessage = (error: Error) => {
+  let message: string = "";
+  if (error instanceof RequestError) {
+    message = error.message;
+  }
+
+  return message;
 };
 
 /**
- * Check if error is not found.
- * @param error
- * @constructor
+ * Custom params serializer
+ * @param params
  */
-export const IsNotFound = (error: Error) => {
-  return error instanceof RequestError && error.code === 404;
+const serializeParams = (params: any) => {
+  const searchParams = new URLSearchParams();
+  for (const key of Object.keys(params)) {
+    const param = params[key];
+    if (Array.isArray(param)) {
+      for (const p of param) {
+        if (p === "undefined" || p === "null" || !p) {
+          continue;
+        }
+        searchParams.append(key, p);
+      }
+    } else if (!(param === "undefined" || param === "null" || !param)) {
+      searchParams.append(key, param);
+    }
+  }
+  return searchParams.toString();
 };
