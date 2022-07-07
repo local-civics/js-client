@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/browser";
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 
 /**
  * The semver version of the library.
@@ -9,7 +9,7 @@ export const VERSION = require("../package.json").version;
 /**
  * The API service name
  */
-export type Service = "curriculum" | "identity" | "discovery" | "media";
+export type ServiceName = "sphere" | "study" | "magnify" | "relay";
 
 /**
  * The API request method
@@ -17,20 +17,14 @@ export type Service = "curriculum" | "identity" | "discovery" | "media";
 export type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 /**
- * The request context
- */
-export type Context = {
-  referrer: string;
-};
-
-/**
  * The client configuration
  */
 export type ClientConfig = {
+  accessToken?: string;
   gatewayURL?: string;
   version?: number;
   retries?: number;
-  timeout?: number;
+  ttl?: number;
   onReject?: (err: any) => any;
 };
 
@@ -38,89 +32,134 @@ export type ClientConfig = {
  * The API request options
  */
 export type RequestOptions = {
+  headers?: any;
   query?: any;
   body?: any;
-  endpoint?: string;
 };
 
 /**
- * Type for the client.
+ * Client
+ * The js client for Local Platform APIs
  */
-export type Client = {
-  do: (
-    ctx: Context,
-    method: Method,
-    service: Service,
-    endpoint: string,
-    options?: RequestOptions
-  ) => Promise<any>;
-};
+export class Client {
+  protected axios: AxiosInstance;
+  protected version: number;
 
-// The js client for Local Platform APIs
-export const init = (accessToken?: string, config?: ClientConfig) => {
-  const version = config?.version || 1;
-  const headers: { [key: string]: any } = {};
-  if (accessToken) {
-    headers["Authorization"] = `Bearer ${accessToken}`;
+  sphere: Service;
+  study: Service;
+  magnify: Service;
+  relay: Service;
+
+  constructor(config?: ClientConfig) {
+    this.version = config?.version || 1;
+
+    const headers: { [key: string]: any } = {};
+    if (config?.accessToken) {
+      headers["Authorization"] = `Bearer ${config.accessToken}`;
+    }
+
+    const timeout = config?.ttl || 5000;
+    const client = axios.create({
+      baseURL: config?.gatewayURL,
+      timeout: timeout,
+      headers: headers,
+      paramsSerializer: serializeParams,
+    });
+
+    client.interceptors.response.use(
+      (response) => response.data,
+      (error) => {
+        let message: string = "";
+        if (error.response && Object.keys(error.response.data).length > 0) {
+          message = error.response.data;
+        }
+
+        if (error.response) {
+          error = new RequestError(error.response.status, message, error);
+        }
+
+        const status = errorCode(error);
+        if (!status || status > 499) {
+          Sentry.captureException(error);
+        }
+
+        if (config?.onReject) {
+          return config.onReject(error);
+        }
+
+        return Promise.reject(error);
+      }
+    );
+
+    this.axios = client;
+    this.sphere = new Service("sphere", this);
+    this.study = new Service("study", this);
+    this.magnify = new Service("magnify", this);
+    this.relay = new Service("relay", this);
   }
 
-  const timeout = config?.timeout || 5000;
-  const client = axios.create({
-    baseURL: config?.gatewayURL,
-    timeout: timeout,
-    headers: headers,
-    paramsSerializer: serializeParams,
-  });
+  do(
+    method: Method,
+    service: ServiceName,
+    endpoint: string,
+    options: RequestOptions
+  ) {
+    const path = endpoint
+      .split("/")
+      .filter((dir) => dir)
+      .join("/");
+    return this.axios.request({
+      method,
+      url: `/${service}/v${this.version}/${path}`,
+      params: options.query,
+      data: options.body,
+      headers: options.headers,
+    });
+  }
+}
 
-  client.interceptors.response.use(
-    (response) => response.data,
-    (error) => {
-      let message: string = "";
-      if (error.response && Object.keys(error.response.data).length > 0) {
-        message = error.response.data;
-      }
+/**
+ * Access point for a microservice within the platform
+ */
+export class Service {
+  name: ServiceName;
+  client: Client;
 
-      if (error.response) {
-        error = new RequestError(error.response.status, message, error);
-      }
+  constructor(name: ServiceName, client: Client) {
+    this.name = name;
+    this.client = client;
+  }
 
-      const status = errorCode(error);
-      if (!status || status > 499) {
-        Sentry.captureException(error);
-      }
+  get(endpoint: string, options?: RequestOptions) {
+    return this.client.do("GET", this.name, endpoint, {
+      ...options,
+    });
+  }
 
-      if (config?.onReject) {
-        return config.onReject(error);
-      }
+  post(endpoint: string, options?: RequestOptions) {
+    return this.client.do("POST", this.name, endpoint, {
+      ...options,
+    });
+  }
 
-      return Promise.reject(error);
-    }
-  );
+  put(endpoint: string, options?: RequestOptions) {
+    return this.client.do("PUT", this.name, endpoint, {
+      ...options,
+    });
+  }
 
-  const api: Client = {
-    do: async (
-      ctx: Context,
-      method: Method,
-      service: Service,
-      endpoint: string,
-      options?: RequestOptions
-    ) => {
-      const path = endpoint
-        .split("/")
-        .filter((dir) => dir)
-        .join("/");
-      return client.request({
-        method,
-        url: `/${service}/v${version}/${path}`,
-        params: options?.query,
-        data: options?.body,
-        headers: ctx.referrer ? { referrer: ctx.referrer } : undefined,
-      });
-    },
-  };
+  patch(endpoint: string, options?: RequestOptions) {
+    return this.client.do("PATCH", this.name, endpoint, {
+      ...options,
+    });
+  }
 
-  return api;
-};
+  delete(endpoint: string, options?: RequestOptions) {
+    return this.client.do("DELETE", this.name, endpoint, {
+      ...options,
+    });
+  }
+}
 
 /**
  * Custom error object for request errors.

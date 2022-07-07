@@ -14,12 +14,13 @@ Add the client to your project.
 
 Import the client
 
-`import { init } from '@local-civics/js-client'`
+`import { Client } from '@local-civics/js-client'`
 
 and use it, like so
 
 ```
-const client = init("my-access-token")
-const ctx = {referrer: "https://www.localcivics.io"}
-const id = client.do(ctx, "GET", "identity", "my/id")
+const client = new Client({
+    accessToken: "my-access-token",
+})
+const id = client.sphere.get("my/id")
 ```
