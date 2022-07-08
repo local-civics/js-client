@@ -40,6 +40,7 @@ describe("client", () => {
       gatewayURL: "https://api.localcivics.io",
     });
     expect(client).not.toBeUndefined();
+    expect(client.getAccessToken()).toEqual("my-access-token");
     await client.sphere.get("/hello", {
       query: {
         param1: ["", undefined, null, false, true],
