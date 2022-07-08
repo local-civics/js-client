@@ -44,6 +44,7 @@ export type RequestOptions = {
 export class Client {
   protected axios: AxiosInstance;
   protected version: number;
+  protected accessToken: string;
 
   sphere: Service;
   study: Service;
@@ -52,6 +53,7 @@ export class Client {
 
   constructor(config?: ClientConfig) {
     this.version = config?.version || 1;
+    this.accessToken = config?.accessToken || ""
 
     const headers: { [key: string]: any } = {};
     if (config?.accessToken) {
@@ -96,6 +98,10 @@ export class Client {
     this.study = new Service("study", this);
     this.magnify = new Service("magnify", this);
     this.relay = new Service("relay", this);
+  }
+
+  getAccessToken(){
+    return this.accessToken
   }
 
   do(
