@@ -114,7 +114,7 @@ export class Client {
       params: options.query,
       data: options.body,
       headers: options.headers,
-    });
+    }) as Promise<any>;
   }
 }
 
