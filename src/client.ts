@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/browser";
-import axios, { AxiosError, AxiosInstance } from "axios";
+import axios, { AxiosInstance } from "axios";
 
 /**
  * The API service name
