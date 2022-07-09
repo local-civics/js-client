@@ -1,10 +1,5 @@
 import * as Sentry from "@sentry/browser";
-import axios, { AxiosInstance } from "axios";
-
-/**
- * The semver version of the library.
- */
-export const VERSION = require("../package.json").version;
+import axios, { AxiosError, AxiosInstance } from "axios";
 
 /**
  * The API service name
@@ -53,7 +48,7 @@ export class Client {
 
   constructor(config?: ClientConfig) {
     this.version = config?.version || 1;
-    this.accessToken = config?.accessToken || ""
+    this.accessToken = config?.accessToken || "";
 
     const headers: { [key: string]: any } = {};
     if (config?.accessToken) {
@@ -100,8 +95,8 @@ export class Client {
     this.relay = new Service("relay", this);
   }
 
-  getAccessToken(){
-    return this.accessToken
+  getAccessToken() {
+    return this.accessToken;
   }
 
   do(
@@ -175,8 +170,12 @@ class RequestError extends Error {
   public readonly code: number;
   public readonly message: string;
 
+  /* istanbul ignore next */
+  // https://github.com/gotwarlost/istanbul/issues/690
   constructor(code: number, message: string, cause?: Error) {
     super(message);
+
+    Object.setPrototypeOf(this, RequestError.prototype);
 
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, RequestError);
