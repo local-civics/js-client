@@ -55,7 +55,7 @@ export class Client {
       headers["Authorization"] = `Bearer ${config.accessToken}`;
     }
 
-    const timeout = config?.ttl || 5000;
+    const timeout = config?.ttl || 10000;
     const client = axios.create({
       baseURL: config?.gatewayURL,
       timeout: timeout,
