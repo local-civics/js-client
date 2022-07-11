@@ -8,9 +8,10 @@ const cfg = [
     output: [
       {
         file: pkg.main,
-        format: "cjs",
-      },
-      {
+        format: "umd",
+        name: "Client",
+        globals: { axios: "Axios", "@sentry/browser": "SentryBrowser"},
+      },{
         file: pkg.module,
         format: "esm",
       },
