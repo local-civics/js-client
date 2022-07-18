@@ -22,5 +22,5 @@ and use it, like so
 const client = new Client({
     accessToken: "my-access-token",
 })
-const id = client.sphere.get("my/id")
+const id = await client.sphere.get("my/id")
 ```
