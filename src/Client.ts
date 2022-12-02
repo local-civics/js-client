@@ -4,7 +4,7 @@ import axios, { AxiosInstance } from "axios";
 /**
  * The API service name
  */
-export type ServiceName = "sphere" | "study" | "magnify" | "relay";
+export type ServiceName = "sphere" | "study" | "relay" | "lake";
 
 /**
  * The API request method
@@ -17,6 +17,7 @@ export type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 export type ClientConfig = {
   accessToken?: string;
   gatewayURL?: string;
+  lakeURL?: string;
   version?: number;
   retries?: number;
   ttl?: number;
@@ -37,14 +38,15 @@ export type RequestOptions = {
  * The js client for Local Platform APIs
  */
 export class Client {
-  protected axios: AxiosInstance;
+  protected compassClient: AxiosInstance;
+  protected lakeClient: AxiosInstance;
   protected version: number;
   protected accessToken: string;
 
   sphere: Service;
   study: Service;
-  magnify: Service;
   relay: Service;
+  lake: Service;
 
   constructor(config?: ClientConfig) {
     this.version = config?.version || 1;
@@ -55,51 +57,62 @@ export class Client {
       headers["Authorization"] = `Bearer ${config.accessToken}`;
     }
 
-    const timeout = config?.ttl || 10000;
-    const client = axios.create({
+    const timeout = config?.ttl || 30000;
+    const compassClient = axios.create({
       baseURL: config?.gatewayURL,
       timeout: timeout,
       headers: headers,
       paramsSerializer: serializeParams,
     });
 
-    client.interceptors.response.use(
-      (response) => response.data,
-      (error) => {
-        let message: string = "";
-        if (error.response && Object.keys(error.response.data).length > 0) {
-          message = error.response.data;
-        }
+    const lakeClient = axios.create({
+      baseURL: config?.lakeURL,
+      timeout: timeout,
+      headers: headers,
+      paramsSerializer: serializeParams,
+    });
 
-        if (error.response) {
-          error = new RequestError(error.response.status, message, error);
-        }
+    [compassClient, lakeClient].forEach(client => {
+      client.interceptors.response.use(
+          (response) => response.data,
+          (error) => {
+            let message: string = "";
+            if (error.response && Object.keys(error.response.data).length > 0) {
+              message = error.response.data;
+            }
 
-        const status = errorCode(error);
-        if (!status || status > 499) {
-          Sentry.captureException(error);
-        }
+            if (error.response) {
+              error = new RequestError(error.response.status, message, error);
+            }
 
-        if (config?.onReject) {
-          return config.onReject(error);
-        }
+            const status = errorCode(error);
+            if (!status || status > 499) {
+              Sentry.captureException(error);
+            }
 
-        return Promise.reject(error);
-      }
-    );
+            if (config?.onReject) {
+              return config.onReject(error);
+            }
 
-    this.axios = client;
-    this.sphere = new Service("sphere", this);
-    this.study = new Service("study", this);
-    this.magnify = new Service("magnify", this);
-    this.relay = new Service("relay", this);
+            return Promise.reject(error);
+          }
+      );
+    })
+
+    this.compassClient = compassClient;
+    this.lakeClient = lakeClient
+
+    this.sphere = new Service("sphere", this.doCompass.bind(this));
+    this.study = new Service("study", this.doCompass.bind(this));
+    this.relay = new Service("relay", this.doCompass.bind(this));
+    this.lake = new Service("lake", this.doLake.bind(this));
   }
 
   getAccessToken() {
     return this.accessToken;
   }
 
-  do(
+  doCompass(
     method: Method,
     service: ServiceName,
     endpoint: string,
@@ -109,9 +122,28 @@ export class Client {
       .split("/")
       .filter((dir) => dir)
       .join("/");
-    return this.axios.request({
+    return this.compassClient.request({
       method,
       url: `/${service}/v${this.version}/${path}`,
+      params: options.query,
+      data: options.body,
+      headers: options.headers,
+    }) as Promise<any>;
+  }
+
+  doLake(
+      method: Method,
+      service: ServiceName,
+      endpoint: string,
+      options: RequestOptions
+  ) {
+    const path = endpoint
+        .split("/")
+        .filter((dir) => dir)
+        .join("/");
+    return this.lakeClient.request({
+      method,
+      url: `/${path}`,
       params: options.query,
       data: options.body,
       headers: options.headers,
@@ -120,43 +152,43 @@ export class Client {
 }
 
 /**
- * Access point for a microservice within the platform
+ * Access point for a platform services
  */
 export class Service {
   name: ServiceName;
-  client: Client;
+  handler: Handler;
 
-  constructor(name: ServiceName, client: Client) {
+  constructor(name: ServiceName, handler: Handler) {
     this.name = name;
-    this.client = client;
+    this.handler = handler;
   }
 
   get(endpoint: string, options?: RequestOptions) {
-    return this.client.do("GET", this.name, endpoint, {
+    return this.handler("GET", this.name, endpoint, {
       ...options,
     });
   }
 
   post(endpoint: string, options?: RequestOptions) {
-    return this.client.do("POST", this.name, endpoint, {
+    return this.handler("POST", this.name, endpoint, {
       ...options,
     });
   }
 
   put(endpoint: string, options?: RequestOptions) {
-    return this.client.do("PUT", this.name, endpoint, {
+    return this.handler("PUT", this.name, endpoint, {
       ...options,
     });
   }
 
   patch(endpoint: string, options?: RequestOptions) {
-    return this.client.do("PATCH", this.name, endpoint, {
+    return this.handler("PATCH", this.name, endpoint, {
       ...options,
     });
   }
 
   delete(endpoint: string, options?: RequestOptions) {
-    return this.client.do("DELETE", this.name, endpoint, {
+    return this.handler("DELETE", this.name, endpoint, {
       ...options,
     });
   }
@@ -238,3 +270,5 @@ const serializeParams = (params: any) => {
   }
   return searchParams.toString();
 };
+
+export type Handler = (method: Method, service: ServiceName, endpoint: string, options: RequestOptions) => Promise<any>;
