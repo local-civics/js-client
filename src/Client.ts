@@ -1,5 +1,5 @@
-import * as Sentry from "@sentry/browser";
-import axios, { AxiosInstance } from "axios";
+import * as Sentry                                     from "@sentry/browser";
+import axios, {AxiosInstance} from "axios";
 
 /**
  * The API service name
@@ -21,7 +21,7 @@ export type ClientConfig = {
   version?: number;
   retries?: number;
   ttl?: number;
-  onReject?: (err: any) => any;
+  onError?: (err: any) => any;
 };
 
 /**
@@ -31,6 +31,7 @@ export type RequestOptions = {
   headers?: any;
   query?: any;
   body?: any;
+  validateStatus?: (status: number) => boolean
 };
 
 /**
@@ -42,6 +43,7 @@ export class Client {
   protected lakeClient: AxiosInstance;
   protected version: number;
   protected accessToken: string;
+  protected onError?: (err: any) => any
 
   sphere: Service;
   study: Service;
@@ -49,27 +51,29 @@ export class Client {
   lake: Service;
 
   constructor(config?: ClientConfig) {
-    this.version = config?.version || 1;
-    this.accessToken = config?.accessToken || "";
+    config = config || {}
+
+    this.version = config.version || 1;
+    this.accessToken = config.accessToken || "";
 
     const headers: { [key: string]: any } = {};
-    if (config?.accessToken) {
+    if (config.accessToken) {
       headers["Authorization"] = `Bearer ${config.accessToken}`;
     }
 
-    const timeout = config?.ttl || 30000;
+    const timeout = config.ttl || 30000;
     const compassClient = axios.create({
-      baseURL: config?.gatewayURL,
+      baseURL: config.gatewayURL,
       timeout: timeout,
       headers: headers,
-      paramsSerializer: serializeParams,
+      paramsSerializer: {indexes: null}
     });
 
     const lakeClient = axios.create({
-      baseURL: config?.lakeURL,
+      baseURL: config.lakeURL,
       timeout: timeout,
       headers: headers,
-      paramsSerializer: serializeParams,
+      paramsSerializer: {indexes: null}
     });
 
     [compassClient, lakeClient].forEach(client => {
@@ -90,8 +94,8 @@ export class Client {
               Sentry.captureException(error);
             }
 
-            if (config?.onReject) {
-              return config.onReject(error);
+            if (config?.onError) {
+              return config.onError(error);
             }
 
             return Promise.reject(error);
@@ -99,6 +103,7 @@ export class Client {
       );
     })
 
+    this.onError = config.onError
     this.compassClient = compassClient;
     this.lakeClient = lakeClient
 
@@ -112,7 +117,7 @@ export class Client {
     return this.accessToken;
   }
 
-  doCompass(
+  async doCompass(
     method: Method,
     service: ServiceName,
     endpoint: string,
@@ -122,16 +127,31 @@ export class Client {
       .split("/")
       .filter((dir) => dir)
       .join("/");
-    return this.compassClient.request({
-      method,
-      url: `/${service}/v${this.version}/${path}`,
-      params: options.query,
-      data: options.body,
-      headers: options.headers,
-    }) as Promise<any>;
+
+    try{
+      return await this.compassClient.request({
+        method,
+        url: `/${service}/v${this.version}/${path}`,
+        params: options.query,
+        data: options.body,
+        headers: options.headers,
+        validateStatus: options.validateStatus,
+      });
+    } catch (e: any){
+      const status = errorCode(e);
+      if (!status || status > 499) {
+        Sentry.captureException(e);
+      }
+
+      if(this.onError){
+        return this.onError(e)
+      }
+
+      return Promise.reject(e)
+    }
   }
 
-  doLake(
+  async doLake(
       method: Method,
       service: ServiceName,
       endpoint: string,
@@ -141,13 +161,28 @@ export class Client {
         .split("/")
         .filter((dir) => dir)
         .join("/");
-    return this.lakeClient.request({
-      method,
-      url: `/${path}`,
-      params: options.query,
-      data: options.body,
-      headers: options.headers,
-    }) as Promise<any>;
+
+    try{
+      return await this.lakeClient.request({
+        method,
+        url: `/${path}`,
+        params: options.query,
+        data: options.body,
+        headers: options.headers,
+        validateStatus: options.validateStatus,
+      })
+    } catch(e: any){
+      const status = errorCode(e);
+      if (!status || status > 499) {
+        Sentry.captureException(e);
+      }
+
+      if(this.onError){
+        return this.onError(e)
+      }
+
+      return Promise.reject(e)
+    }
   }
 }
 
@@ -165,6 +200,7 @@ export class Service {
 
   get(endpoint: string, options?: RequestOptions) {
     return this.handler("GET", this.name, endpoint, {
+      validateStatus: (status) => status < 500,
       ...options,
     });
   }
@@ -247,28 +283,6 @@ export const errorMessage = (error: Error) => {
   }
 
   return message;
-};
-
-/**
- * Custom params serializer
- * @param params
- */
-const serializeParams = (params: any) => {
-  const searchParams = new URLSearchParams();
-  for (const key of Object.keys(params)) {
-    const param = params[key];
-    if (Array.isArray(param)) {
-      for (const p of param) {
-        if (p === "undefined" || p === "null" || !p) {
-          continue;
-        }
-        searchParams.append(key, p);
-      }
-    } else if (!(param === "undefined" || param === "null" || !param)) {
-      searchParams.append(key, param);
-    }
-  }
-  return searchParams.toString();
 };
 
 export type Handler = (method: Method, service: ServiceName, endpoint: string, options: RequestOptions) => Promise<any>;
