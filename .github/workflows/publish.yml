@@ -1,12 +1,13 @@
-# .github/workflows/release.yml
+# .github/workflows/publish.yml
 
 # Workflow name
-name: "Release"
+name: "Publish"
 
-# Calendar for the workflow
+# Events for the workflow
 on:
-  release:
-    types: [created]
+  push:
+    branches:
+      - master
 
 # List of jobs
 jobs:
