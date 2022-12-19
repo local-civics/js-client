@@ -69,7 +69,7 @@ export class Client {
       timeout: timeout,
       headers: headers,
       paramsSerializer: {indexes: null},
-      adapter: throttleAdapterEnhancer(cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, { enabledByDefault: false })),
+      adapter: cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, { enabledByDefault: false }),
     });
 
     const lakeClient = axios.create({
@@ -77,7 +77,7 @@ export class Client {
       timeout: timeout,
       headers: headers,
       paramsSerializer: {indexes: null},
-      adapter: throttleAdapterEnhancer(cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, { enabledByDefault: false })),
+      adapter: cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, { enabledByDefault: false }),
     });
 
     [compassClient, lakeClient].forEach(client => {
