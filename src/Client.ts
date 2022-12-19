@@ -1,6 +1,6 @@
 import * as Sentry                                       from "@sentry/browser";
-import axios, {AxiosInstance}              from "axios";
-import LRU from "lru-cache";
+import axios, {AxiosInstance} from "axios";
+import {LRUMap} from "lru_map"
 
 /**
  * The API service name
@@ -43,7 +43,7 @@ export type RequestOptions = {
 export class Client {
   protected compassClient: AxiosInstance;
   protected lakeClient: AxiosInstance;
-  protected cache: LRU<any, any>;
+  protected cache: LRUMap<any, any>;
   protected version: number;
   protected accessToken: string;
   protected onError?: (err: any) => any
@@ -64,21 +64,7 @@ export class Client {
       headers["Authorization"] = `Bearer ${config.accessToken}`;
     }
 
-    const cache = new LRU({
-      max: 500,
-      // how long to live in ms
-      ttl: 1000 * 60 * 5,
-      sizeCalculation: () => 1,
-
-      // return stale items before removing from cache?
-      allowStale: false,
-
-      updateAgeOnGet: false,
-      updateAgeOnHas: false,
-      // for use with tracking overall storage size
-      maxSize: 5000,
-    })
-
+    const cache = new LRUMap(500)
     const timeout = config.timeout || 30000;
     const compassClient = axios.create({
       baseURL: config.gatewayURL,
@@ -147,6 +133,7 @@ export class Client {
       .filter((dir) => dir)
       .join("/");
 
+    const now = new Date()
     const request = {
       method,
       url: `/${service}/v${this.version}/${path}`,
@@ -156,17 +143,25 @@ export class Client {
       validateStatus: options.validateStatus,
     }
 
+    const requestKey = JSON.stringify(request)
     if(method === "GET" && options.cache) {
-      const resp = this.cache.get(request)
+      const resp = this.cache.get(requestKey)
       if(resp){
-        return Promise.resolve(resp)
+        if(resp.ttl > now){
+          return Promise.resolve(resp.data)
+        }
+
+        this.cache.delete(requestKey)
       }
     }
 
     try{
       return await this.compassClient.request(request).then(resp => {
         if(method === "GET" && options.cache){
-            this.cache.set(request, resp)
+            this.cache.set(requestKey, {
+              data: resp,
+              ttl: new Date(now.getTime() + 5*60000)
+            })
         }
 
         return resp
@@ -196,6 +191,7 @@ export class Client {
         .filter((dir) => dir)
         .join("/");
 
+    const now = new Date()
     const request = {
       method,
       url: `/${path}`,
@@ -205,8 +201,29 @@ export class Client {
       validateStatus: options.validateStatus,
     }
 
+    const requestKey = JSON.stringify(request)
+    if(method === "GET" && options.cache) {
+      const resp = this.cache.get(requestKey)
+      if(resp){
+        if(resp.ttl > now){
+          return Promise.resolve(resp.data)
+        }
+
+        this.cache.delete(requestKey)
+      }
+    }
+
     try{
-      return await this.lakeClient.request(request)
+      return await this.lakeClient.request(request).then(resp => {
+        if(method === "GET" && options.cache){
+          this.cache.set(requestKey, {
+            data: resp,
+            ttl: new Date(now.getTime() + 5*60000)
+          })
+        }
+
+        return resp
+      })
     } catch(e: any){
       const status = errorCode(e);
       if (!status || status > 499) {

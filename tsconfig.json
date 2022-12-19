@@ -6,12 +6,16 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowSyntheticDefaultImports": true,
     "module": "esnext",
-    "target": "es5",
+    "target": "esnext",
+    "sourceMap": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
     "declaration": true,
+    "skipLibCheck": true,
     "outDir": "dist",
+    "allowJs": true,
     "emitDeclarationOnly": true,
+    "resolveJsonModule": true,
     "strict": true
   }
 }
