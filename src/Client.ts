@@ -205,7 +205,6 @@ export class Service {
   get(endpoint: string, options?: RequestOptions) {
     return this.handler("GET", this.name, endpoint, {
       validateStatus: (status) => status < 500,
-      cache: false,
       ...options,
     });
   }
