@@ -1,9 +1,6 @@
 import * as Sentry                                       from "@sentry/browser";
-import axios, {AxiosAdapter, AxiosInstance}              from "axios";
-import xhrAdapter from "axios/lib/adapters/xhr"
-import { cacheAdapterEnhancer, throttleAdapterEnhancer, ICacheLike } from 'axios-extensions';
-
-axios.defaults.adapter = xhrAdapter;
+import axios, {AxiosInstance}              from "axios";
+import LRU from "lru-cache";
 
 /**
  * The API service name
@@ -24,7 +21,7 @@ export type ClientConfig = {
   lakeURL?: string;
   version?: number;
   retries?: number;
-  ttl?: number;
+  timeout?: number;
   onError?: (err: any) => any;
 };
 
@@ -35,7 +32,7 @@ export type RequestOptions = {
   headers?: any;
   query?: any;
   body?: any;
-  cache?: boolean | ICacheLike<any>
+  cache?: boolean
   validateStatus?: (status: number) => boolean
 };
 
@@ -46,6 +43,7 @@ export type RequestOptions = {
 export class Client {
   protected compassClient: AxiosInstance;
   protected lakeClient: AxiosInstance;
+  protected cache: LRU<any, any>;
   protected version: number;
   protected accessToken: string;
   protected onError?: (err: any) => any
@@ -66,13 +64,27 @@ export class Client {
       headers["Authorization"] = `Bearer ${config.accessToken}`;
     }
 
-    const timeout = config.ttl || 30000;
+    const cache = new LRU({
+      max: 500,
+      // how long to live in ms
+      ttl: 1000 * 60 * 5,
+      sizeCalculation: () => 1,
+
+      // return stale items before removing from cache?
+      allowStale: false,
+
+      updateAgeOnGet: false,
+      updateAgeOnHas: false,
+      // for use with tracking overall storage size
+      maxSize: 5000,
+    })
+
+    const timeout = config.timeout || 30000;
     const compassClient = axios.create({
       baseURL: config.gatewayURL,
       timeout: timeout,
       headers: headers,
       paramsSerializer: {indexes: null},
-      adapter: throttleAdapterEnhancer(cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, { enabledByDefault: false })),
     });
 
     const lakeClient = axios.create({
@@ -80,7 +92,6 @@ export class Client {
       timeout: timeout,
       headers: headers,
       paramsSerializer: {indexes: null},
-      adapter: throttleAdapterEnhancer(cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, { enabledByDefault: false })),
     });
 
     [compassClient, lakeClient].forEach(client => {
@@ -113,6 +124,7 @@ export class Client {
     this.onError = config.onError
     this.compassClient = compassClient;
     this.lakeClient = lakeClient
+    this.cache = cache
 
     this.sphere = new Service("sphere", this.doCompass.bind(this));
     this.study = new Service("study", this.doCompass.bind(this));
@@ -135,14 +147,29 @@ export class Client {
       .filter((dir) => dir)
       .join("/");
 
+    const request = {
+      method,
+      url: `/${service}/v${this.version}/${path}`,
+      params: options.query,
+      data: options.body,
+      headers: options.headers,
+      validateStatus: options.validateStatus,
+    }
+
+    if(method === "GET" && options.cache) {
+      const resp = this.cache.get(request)
+      if(resp){
+        return Promise.resolve(resp)
+      }
+    }
+
     try{
-      return await this.compassClient.request({
-        method,
-        url: `/${service}/v${this.version}/${path}`,
-        params: options.query,
-        data: options.body,
-        headers: options.headers,
-        validateStatus: options.validateStatus,
+      return await this.compassClient.request(request).then(resp => {
+        if(method === "GET" && options.cache){
+            this.cache.set(request, resp)
+        }
+
+        return resp
       });
     } catch (e: any){
       const status = errorCode(e);
@@ -169,15 +196,17 @@ export class Client {
         .filter((dir) => dir)
         .join("/");
 
+    const request = {
+      method,
+      url: `/${path}`,
+      params: options.query,
+      data: options.body,
+      headers: options.headers,
+      validateStatus: options.validateStatus,
+    }
+
     try{
-      return await this.lakeClient.request({
-        method,
-        url: `/${path}`,
-        params: options.query,
-        data: options.body,
-        headers: options.headers,
-        validateStatus: options.validateStatus,
-      })
+      return await this.lakeClient.request(request)
     } catch(e: any){
       const status = errorCode(e);
       if (!status || status > 499) {

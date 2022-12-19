@@ -13,7 +13,7 @@ const cfg = [
         globals: {
           axios: "Axios",
           "@sentry/browser": "SentryBrowser",
-          "axios-extensions": "AxiosExtensions",
+          "lru-cache": "LRUCache",
         },
       },{
         file: pkg.module,
@@ -21,7 +21,7 @@ const cfg = [
       },
     ],
     plugins: [typescript(), terser()],
-    external: ["@sentry/browser", "axios", "axios-extensions"],
+    external: ["@sentry/browser", "axios", "lru-cache"],
   },
 ];
 
