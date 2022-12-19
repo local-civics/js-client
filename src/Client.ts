@@ -1,5 +1,6 @@
 import * as Sentry                                     from "@sentry/browser";
-import axios, {AxiosInstance} from "axios";
+import axios                                             from "axios";
+import {setupCache, AxiosCacheInstance, CacheProperties} from 'axios-cache-interceptor';
 
 /**
  * The API service name
@@ -31,6 +32,7 @@ export type RequestOptions = {
   headers?: any;
   query?: any;
   body?: any;
+  cache?: false | Partial<CacheProperties>
   validateStatus?: (status: number) => boolean
 };
 
@@ -39,8 +41,8 @@ export type RequestOptions = {
  * The js client for Local Platform APIs
  */
 export class Client {
-  protected compassClient: AxiosInstance;
-  protected lakeClient: AxiosInstance;
+  protected compassClient: AxiosCacheInstance;
+  protected lakeClient: AxiosCacheInstance;
   protected version: number;
   protected accessToken: string;
   protected onError?: (err: any) => any
@@ -62,19 +64,19 @@ export class Client {
     }
 
     const timeout = config.ttl || 30000;
-    const compassClient = axios.create({
+    const compassClient = setupCache(axios.create({
       baseURL: config.gatewayURL,
       timeout: timeout,
       headers: headers,
       paramsSerializer: {indexes: null}
-    });
+    }));
 
-    const lakeClient = axios.create({
+    const lakeClient = setupCache(axios.create({
       baseURL: config.lakeURL,
       timeout: timeout,
       headers: headers,
       paramsSerializer: {indexes: null}
-    });
+    }));
 
     [compassClient, lakeClient].forEach(client => {
       client.interceptors.response.use(
@@ -201,6 +203,7 @@ export class Service {
   get(endpoint: string, options?: RequestOptions) {
     return this.handler("GET", this.name, endpoint, {
       validateStatus: (status) => status < 500,
+      cache: false,
       ...options,
     });
   }
