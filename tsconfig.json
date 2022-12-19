@@ -1,9 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "js-client",
-  "include": ["src/index.ts"],
+  "include": ["src/**/*"],
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
+    "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "target": "es5",
     "esModuleInterop": true,

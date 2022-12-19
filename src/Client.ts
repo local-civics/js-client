@@ -1,6 +1,9 @@
 import * as Sentry                                       from "@sentry/browser";
 import axios, {AxiosAdapter, AxiosInstance}              from "axios";
+import httpAdapter from "axios/lib/adapters/http"
 import { cacheAdapterEnhancer, throttleAdapterEnhancer, ICacheLike } from 'axios-extensions';
+
+axios.defaults.adapter = httpAdapter;
 
 /**
  * The API service name
@@ -69,7 +72,7 @@ export class Client {
       timeout: timeout,
       headers: headers,
       paramsSerializer: {indexes: null},
-      adapter: cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, { enabledByDefault: false }),
+      adapter: throttleAdapterEnhancer(cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, { enabledByDefault: false })),
     });
 
     const lakeClient = axios.create({
@@ -77,7 +80,7 @@ export class Client {
       timeout: timeout,
       headers: headers,
       paramsSerializer: {indexes: null},
-      adapter: cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, { enabledByDefault: false }),
+      adapter: throttleAdapterEnhancer(cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, { enabledByDefault: false })),
     });
 
     [compassClient, lakeClient].forEach(client => {
