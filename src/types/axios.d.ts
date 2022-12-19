@@ -1,7 +1,7 @@
-declare module 'axios/lib/adapters/http' {
+declare module 'axios/lib/adapters/xhr' {
     import { AxiosAdapter } from 'axios';
 
-    const HttpAdapter: AxiosAdapter;
+    const XHRAdapter: AxiosAdapter;
 
-    export default HttpAdapter;
+    export default XHRAdapter;
 }

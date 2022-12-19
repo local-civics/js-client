@@ -1,6 +1,6 @@
 {
   "name": "@local-civics/js-client",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "scripts": {

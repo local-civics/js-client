@@ -1,9 +1,9 @@
 import * as Sentry                                       from "@sentry/browser";
 import axios, {AxiosAdapter, AxiosInstance}              from "axios";
-import httpAdapter from "axios/lib/adapters/http"
+import xhrAdapter from "axios/lib/adapters/xhr"
 import { cacheAdapterEnhancer, throttleAdapterEnhancer, ICacheLike } from 'axios-extensions';
 
-axios.defaults.adapter = httpAdapter;
+axios.defaults.adapter = xhrAdapter;
 
 /**
  * The API service name
