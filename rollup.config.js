@@ -10,14 +10,14 @@ const cfg = [
         file: pkg.main,
         format: "umd",
         name: "Client",
-        globals: { axios: "Axios", "@sentry/browser": "SentryBrowser"},
+        globals: { axios: "Axios", "@sentry/browser": "SentryBrowser", "axios-extensions": "AxiosExtensions"},
       },{
         file: pkg.module,
         format: "esm",
       },
     ],
     plugins: [typescript(), terser()],
-    external: ["@sentry/browser", "axios"],
+    external: ["@sentry/browser", "axios", "axios-extensions"],
   },
 ];
 
