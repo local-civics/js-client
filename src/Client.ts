@@ -1,6 +1,6 @@
-import * as Sentry                                     from "@sentry/browser";
-import axios                                             from "axios";
-import {setupCache, AxiosCacheInstance, CacheProperties} from 'axios-cache-interceptor';
+import * as Sentry                                       from "@sentry/browser";
+import axios, {AxiosAdapter, AxiosInstance}              from "axios";
+import { cacheAdapterEnhancer, throttleAdapterEnhancer, ICacheLike } from 'axios-extensions';
 
 /**
  * The API service name
@@ -32,7 +32,7 @@ export type RequestOptions = {
   headers?: any;
   query?: any;
   body?: any;
-  cache?: false | Partial<CacheProperties>
+  cache?: boolean | ICacheLike<any>
   validateStatus?: (status: number) => boolean
 };
 
@@ -41,8 +41,8 @@ export type RequestOptions = {
  * The js client for Local Platform APIs
  */
 export class Client {
-  protected compassClient: AxiosCacheInstance;
-  protected lakeClient: AxiosCacheInstance;
+  protected compassClient: AxiosInstance;
+  protected lakeClient: AxiosInstance;
   protected version: number;
   protected accessToken: string;
   protected onError?: (err: any) => any
@@ -64,19 +64,21 @@ export class Client {
     }
 
     const timeout = config.ttl || 30000;
-    const compassClient = setupCache(axios.create({
+    const compassClient = axios.create({
       baseURL: config.gatewayURL,
       timeout: timeout,
       headers: headers,
-      paramsSerializer: {indexes: null}
-    }));
+      paramsSerializer: {indexes: null},
+      adapter: throttleAdapterEnhancer(cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter)),
+    });
 
-    const lakeClient = setupCache(axios.create({
+    const lakeClient = axios.create({
       baseURL: config.lakeURL,
       timeout: timeout,
       headers: headers,
-      paramsSerializer: {indexes: null}
-    }));
+      paramsSerializer: {indexes: null},
+      adapter: throttleAdapterEnhancer(cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter)),
+    });
 
     [compassClient, lakeClient].forEach(client => {
       client.interceptors.response.use(

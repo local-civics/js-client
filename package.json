@@ -12,7 +12,7 @@
   "dependencies": {
     "@sentry/browser": "^7.23.0",
     "axios": "^1.2.0",
-    "axios-cache-interceptor": "^0.10.7"
+    "axios-extensions": "^3.1.6"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.3",
