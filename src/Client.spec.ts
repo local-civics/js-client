@@ -58,6 +58,15 @@ describe("client", () => {
             },
         });
 
+        await client.sphere.get("/hello", {
+            cache: true,
+            query: {
+                param1: ["", undefined, null, false, true],
+                param2: "",
+                param3: 1337,
+            },
+        });
+
         await client.study.get("/hello", {
             query: {
                 param1: ["", undefined, null, false, true],

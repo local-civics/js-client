@@ -41,11 +41,11 @@ export type RequestOptions = {
  * The js client for Local Platform APIs
  */
 export class Client {
-  protected compassClient: AxiosInstance;
-  protected lakeClient: AxiosInstance;
+  protected compassClient!: AxiosInstance;
+  protected lakeClient!: AxiosInstance;
   protected cache: LRUMap<any, any>;
-  protected version: number;
-  protected accessToken: string;
+  protected version!: number;
+  protected accessToken!: string;
   protected onError?: (err: any) => any
 
   sphere: Service;
@@ -54,18 +54,21 @@ export class Client {
   lake: Service;
 
   constructor(config?: ClientConfig) {
-    config = config || {}
+    this.configure(config || {})
+    this.cache = new LRUMap(500)
+    this.sphere = new Service("sphere", this.doCompass.bind(this));
+    this.study = new Service("study", this.doCompass.bind(this));
+    this.relay = new Service("relay", this.doCompass.bind(this));
+    this.lake = new Service("lake", this.doLake.bind(this));
+  }
 
-    this.version = config.version || 1;
-    this.accessToken = config.accessToken || "";
-
+  configure(config: ClientConfig) {
+    const timeout = config.timeout || 30000;
     const headers: { [key: string]: any } = {};
-    if (config.accessToken) {
+    if(config.accessToken){
       headers["Authorization"] = `Bearer ${config.accessToken}`;
     }
 
-    const cache = new LRUMap(500)
-    const timeout = config.timeout || 30000;
     const compassClient = axios.create({
       baseURL: config.gatewayURL,
       timeout: timeout,
@@ -107,15 +110,11 @@ export class Client {
       );
     })
 
+    this.version = config.version || 1;
+    this.accessToken = config.accessToken || "";
     this.onError = config.onError
     this.compassClient = compassClient;
     this.lakeClient = lakeClient
-    this.cache = cache
-
-    this.sphere = new Service("sphere", this.doCompass.bind(this));
-    this.study = new Service("study", this.doCompass.bind(this));
-    this.relay = new Service("relay", this.doCompass.bind(this));
-    this.lake = new Service("lake", this.doLake.bind(this));
   }
 
   getAccessToken() {
