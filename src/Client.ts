@@ -97,7 +97,7 @@ export class Client {
             }
 
             const status = errorCode(error);
-            if (!status || status > 499) {
+            if (status && status > 499) {
               Sentry.captureException(error);
             }
 
